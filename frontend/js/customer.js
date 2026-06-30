@@ -68,6 +68,19 @@ function saveCustomer() {
         return;
     }
 
+    const phoneReg = /(^\d{8}$)|(^\d{11}$)/;
+    if (!phoneReg.test(data.land_phone)) {
+        alert("手机号必须为8或11位数字");
+        return;
+    }
+
+    const idCardReg = /(^\d{15}$)|(^\d{17}[\dX]$)/;
+    if (!idCardReg.test(data.land_idcard)) {
+        alert("身份证号必须为15位数字或18位数字(末位可为X)");
+        return;
+    }
+
+
     const api = id ? http.post("/customer/update", { ...data, cust_id: id }) : http.post("/customer/add", data);
     api.then(() => {
         alert("保存成功");

@@ -13,7 +13,7 @@
 
         <div class="toolbar">
             <div class="search-box">
-                <input type="text" id="houseKeyword" class="form-control form-control-sm" placeholder="搜索房号/地址" style="width:200px;">
+                <input type="text" id="houseKeyword" class="form-control form-control-sm" placeholder="搜索地址" style="width:200px;">
                 <select id="houseStatus" class="form-select form-select-sm" style="width:120px;">
                     <option value="-1">全部状态</option>
                     <option value="0">空置可租</option>
@@ -32,10 +32,10 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>房号</th>
+                        <th>ID</th>
+                        <th>地址</th>
                         <th>户型</th>
                         <th>房东</th>
-                        <th>地址</th>
                         <th>面积</th>
                         <th>月租金</th>
                         <th>状态</th>
@@ -59,9 +59,21 @@
                 <form id="houseForm" class="modal-body modal-form">
                     <input type="hidden" id="houseId">
                     <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>房号 <span style="color:red">*</span></label>
-                            <input type="text" id="houseNo" placeholder="唯一标识">
+                        <div class="col-md-12 form-group">
+                            <label>省 <span style="color:red">*</span></label>
+                            <input type="text" id="province">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>市 <span style="color:red">*</span></label>
+                            <input type="text" id="city">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>县 <span style="color:red">*</span></label>
+                            <input type="text" id="county">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>房屋地址 <span style="color:red">*</span></label>
+                            <input type="text" id="address" placeholder="详细地址">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>户型 <span style="color:red">*</span></label>
@@ -73,19 +85,11 @@
                         </div>
                         <div class="col-md-6 form-group">
                             <label>建筑面积(㎡) <span style="color:red">*</span></label>
-                            <input type="number" id="area" step="0.1">
+                            <input type="number" id="area" step="0.1" min="0">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>月租金(元) <span style="color:red">*</span></label>
-                            <input type="number" id="rentPrice" step="0.01">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>押金(元) <span style="color:red">*</span></label>
-                            <input type="number" id="deposit" step="0.01">
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <label>房屋地址 <span style="color:red">*</span></label>
-                            <input type="text" id="address" placeholder="详细地址">
+                            <input type="number" id="rentPrice" step="0.01" min="0">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>房屋状态</label>

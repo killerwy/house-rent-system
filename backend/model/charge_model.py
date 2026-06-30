@@ -19,7 +19,7 @@ class ChargeModel:
         
         # 基础SQL
         base_sql = f"""
-        SELECT cr.*, rc.contract_id, h.house_no, c.cust_name 
+        SELECT cr.*, rc.contract_id, h.province, h.city, h.county, h.address, c.cust_name 
         FROM charge_record cr
         LEFT JOIN rent_contract rc ON cr.contract_id = rc.contract_id
         LEFT JOIN house h ON rc.house_id = h.house_id

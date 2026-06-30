@@ -1,4 +1,4 @@
-"""视图查询接口：查询 v_house_all_info 视图，展示房号、房东、状态等信息"""
+"""视图查询接口：查询 v_house_all_info 视图，展示地址、房东、状态等信息"""
 from flask import Blueprint, request
 from db.mysql_conn import MySQLConnection
 from util.response_util import success, page_success
@@ -10,7 +10,7 @@ view_api = Blueprint("view_api", __name__, url_prefix="/api/view")
 @view_api.route("/houseAll", methods=["GET"])
 @permission_required("view")
 def get_house_all_view():
-    """查询房屋总览视图（房号+房东+状态），支持分页、关键词搜索"""
+    """查询房屋总览视图（地址+房东+状态），支持分页、关键词搜索"""
     page, size, offset = get_page_params(request)
     keyword = request.args.get("keyword", "")
     
@@ -18,7 +18,7 @@ def get_house_all_view():
     where_sql = ""
     params = []
     if keyword:
-        where_sql = " WHERE 房号 LIKE %s OR 房东姓名 LIKE %s OR 房屋地址 LIKE %s "
+        where_sql = " WHERE 房屋地址 LIKE %s OR 房东姓名 LIKE %s "
         like_key = f"%{keyword}%"
         params = [like_key, like_key, like_key]
     

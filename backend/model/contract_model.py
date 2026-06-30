@@ -5,14 +5,14 @@ from util.page_util import build_page_sql, get_total_count
 class ContractModel:
     @staticmethod
     def get_contract_list(offset, size, keyword="", status=-1):
-        """分页查询合同（支持房号/租客姓名搜索、状态筛选）"""
+        """分页查询合同（支持房屋地址/租客姓名搜索、状态筛选）"""
         # 构建条件
         where_conditions = []
         params = []
         if keyword:
-            where_conditions.append("(h.house_no LIKE %s OR c.cust_name LIKE %s)")
+            where_conditions.append("(h.province LIKE %s OR h.city LIKE %s OR h.county LIKE %s OR h.address LIKE %s OR c.cust_name LIKE %s)")
             like_keyword = f"%{keyword}%"
-            params.extend([like_keyword, like_keyword])
+            params.extend([like_keyword, like_keyword, like_keyword, like_keyword, like_keyword])
         if status != -1:
             where_conditions.append("rc.contract_status = %s")
             params.append(status)
@@ -20,7 +20,7 @@ class ContractModel:
         
         # 基础SQL
         base_sql = f"""
-        SELECT rc.*, h.house_no, c.cust_name, c.cust_phone, u.real_name as operator_name
+        SELECT rc.*, h.province, h.city, h.county, h.address, c.cust_name, c.cust_phone, u.real_name as operator_name
         FROM rent_contract rc
         LEFT JOIN house h ON rc.house_id = h.house_id
         LEFT JOIN customer c ON rc.cust_id = c.cust_id
@@ -66,7 +66,7 @@ class ContractModel:
     def get_contract_by_id(contract_id):
         """根据ID查询合同"""
         sql = """
-        SELECT rc.*, h.house_no, h.address, c.cust_name, c.cust_phone, u.real_name as operator_name
+        SELECT rc.*, h.province, h.city, h.county, h.address, c.cust_name, c.cust_phone, u.real_name as operator_name
         FROM rent_contract rc
         LEFT JOIN house h ON rc.house_id = h.house_id
         LEFT JOIN customer c ON rc.cust_id = c.cust_id

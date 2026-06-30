@@ -47,7 +47,7 @@ class UserModel:
 
     @staticmethod
     def update_password(user_id, new_password):
-        """修改密码（加密）"""
+        """修改密码"""
         sql = "UPDATE sys_user SET password = %s WHERE user_id = %s"
         return MySQLConnection.execute_sql(sql, (new_password, user_id))
 

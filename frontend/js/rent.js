@@ -3,7 +3,7 @@ function loadEmptyHouseList() {
     http.get("/house/list", { params: { page:1, size:1000, status:0 } }).then(res => {
         let html = '<option value="">请选择空置房源</option>';
         res.list.forEach(item => {
-            html += `<option value="${item.house_id}" data-rent="${item.rent_price}">${item.house_no} - ${item.address} (${formatMoney(item.rent_price)}/月)</option>`;
+            html += `<option value="${item.house_id}" data-rent="${item.rent_price}">${item.province + item.city + item.county + item.address} (${formatMoney(item.rent_price)}/月)</option>`;
         });
         document.getElementById("houseSelect").innerHTML = html;
         // 选择房屋自动填充租金
@@ -69,13 +69,14 @@ function loadContractList(page = 1) {
             html += `
             <tr>
                 <td>${item.contract_id}</td>
-                <td>${item.house_no}</td>
+                <td>${item.province + item.city + item.county + item.address}</td>
                 <td>${item.cust_name}</td>
                 <td>${formatDate(item.start_date)}</td>
                 <td>${formatDate(item.end_date)}</td>
                 <td>${formatMoney(item.real_rent)}</td>
                 <td><span class="status-tag ${statusClass}">${statusText}</span></td>
                 <td>${item.operator_name}</td>
+                <td>${formatDate(item.create_time)}</td>
                 <td>
                     <button class="btn-link" onclick="viewContract(${item.contract_id})">详情</button>
                     ${item.contract_status === 0 ? `<button class="btn-link" onclick="openReturnModal(${item.contract_id})">办理退租</button>` : ""}
@@ -120,6 +121,6 @@ function submitReturn() {
 
 function viewContract(id) {
     http.get("/rent/" + id).then(res => {
-        alert(`合同详情：\n合同号：${res.contract_id}\n房号：${res.house_no}\n租客：${res.cust_name}\n起租：${formatDate(res.start_date)}\n到期：${formatDate(res.end_date)}\n月租金：${formatMoney(res.real_rent)}\n状态：${res.contract_status===0?"租住中":"已退租"}`);
+        alert(`合同详情：\n合同号：${res.contract_id}\n地址：${res.province + res.city + res.county + res.address}\n租客：${res.cust_name}\n起租：${formatDate(res.start_date)}\n到期：${formatDate(res.end_date)}\n月租金：${formatMoney(res.real_rent)}\n状态：${res.contract_status===0?"租住中":"已退租"}`);
     });
 }

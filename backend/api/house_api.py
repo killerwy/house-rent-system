@@ -22,13 +22,12 @@ def add_type():
     """新增户型"""
     data = request.get_json()
     type_name = data.get("type_name")
-    area_range = data.get("area_range")
     remark = data.get("remark", "")
     
     if not type_name:
         return fail(msg="户型名称不能为空", code=400)
     
-    result = HouseTypeModel.add_type(type_name, area_range, remark)
+    result = HouseTypeModel.add_type(type_name, remark)
     if result > 0:
         return success(msg="新增户型成功")
     else:
@@ -49,13 +48,12 @@ def update_type():
     data = request.get_json()
     type_id = data.get("type_id")
     type_name = data.get("type_name")
-    area_range = data.get("area_range")
     remark = data.get("remark", "")
     
     if not type_id or not type_name:
         return fail(msg="必填参数不能为空", code=400)
     
-    result = HouseTypeModel.update_type(type_id, type_name, area_range, remark)
+    result = HouseTypeModel.update_type(type_id, type_name, remark)
     if result > 0:
         return success(msg="修改户型成功")
     else:
@@ -90,27 +88,28 @@ def get_house_list():
 def add_house():
     """新增房源"""
     data = request.get_json()
-    house_no = data.get("house_no")
+    province = data.get("province")
+    city = data.get("city")
+    county = data.get("county")
+    address = data.get("address")
     type_id = data.get("type_id")
     land_id = data.get("land_id")
-    address = data.get("address")
     area = data.get("area")
     rent_price = data.get("rent_price")
-    deposit = data.get("deposit")
     facilities = data.get("facilities", "")
     status = data.get("status", 0)
     
     # 校验参数
-    required = [house_no, type_id, land_id, address, area, rent_price, deposit]
+    required = [province, city, county, address, type_id, land_id, area, rent_price]
     if not all(required):
         return fail(msg="必填参数不能为空", code=400)
     
-    # 检查房号是否重复
-    if HouseModel.get_house_by_no(house_no):
-        return fail(msg="房号已存在", code=400)
+    # 检查房屋地址是否重复
+    if HouseModel.get_house_by_address(province, city, county, address):
+        return fail(msg="房屋已存在", code=400)
     
     # 新增
-    result = HouseModel.add_house(house_no, type_id, land_id, address, area, rent_price, deposit, facilities, status)
+    result = HouseModel.add_house(province, city, county, address, type_id, land_id, area, rent_price, facilities, status)
     if result > 0:
         return success(msg="新增房源成功")
     else:
@@ -122,27 +121,28 @@ def update_house():
     """修改房源"""
     data = request.get_json()
     house_id = data.get("house_id")
-    house_no = data.get("house_no")
+    province = data.get("province")
+    city = data.get("city")
+    county = data.get("county")
+    address = data.get("address")
     type_id = data.get("type_id")
     land_id = data.get("land_id")
-    address = data.get("address")
     area = data.get("area")
     rent_price = data.get("rent_price")
-    deposit = data.get("deposit")
     facilities = data.get("facilities", "")
     status = data.get("status", 0)
     
-    required = [house_id, house_no, type_id, land_id, address, area, rent_price, deposit]
+    required = [house_id, province, city, county, address, type_id, land_id, area, rent_price]
     if not all(required):
         return fail(msg="必填参数不能为空", code=400)
     
-    # 检查房号是否重复（排除自身）
-    house = HouseModel.get_house_by_no(house_no)
+    # 检查房屋是否重复（排除自身）
+    house = HouseModel.get_house_by_address(province, city, county, address)
     if house and house["house_id"] != int(house_id):
-        return fail(msg="房号已存在", code=400)
+        return fail(msg="房屋已存在", code=400)
     
     # 修改
-    result = HouseModel.update_house(house_id, house_no, type_id, land_id, address, area, rent_price, deposit, facilities, status)
+    result = HouseModel.update_house(house_id, province, city, county, address, type_id, land_id, area, rent_price, facilities, status)
     if result > 0:
         return success(msg="修改房源成功")
     else:

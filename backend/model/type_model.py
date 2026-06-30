@@ -9,23 +9,23 @@ class HouseTypeModel:
         return MySQLConnection.execute_sql(sql, fetch_type="all")
 
     @staticmethod
-    def add_type(type_name, area_range, remark=""):
+    def add_type(type_name, remark=""):
         """新增户型"""
         sql = """
-        INSERT INTO house_type(type_name, area_range, remark) 
-        VALUES (%s, %s, %s)
+        INSERT INTO house_type(type_name, remark) 
+        VALUES (%s, %s)
         """
-        return MySQLConnection.execute_sql(sql, (type_name, area_range, remark))
+        return MySQLConnection.execute_sql(sql, (type_name, remark))
 
     @staticmethod
-    def update_type(type_id, type_name, area_range, remark=""):
+    def update_type(type_id, type_name, remark=""):
         """修改户型"""
         sql = """
         UPDATE house_type 
-        SET type_name=%s, area_range=%s, remark=%s 
+        SET type_name=%s, remark=%s 
         WHERE type_id=%s
         """
-        return MySQLConnection.execute_sql(sql, (type_name, area_range, remark, type_id))
+        return MySQLConnection.execute_sql(sql, (type_name, remark, type_id))
 
     @staticmethod
     def delete_type(type_id):

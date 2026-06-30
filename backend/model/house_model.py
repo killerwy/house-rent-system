@@ -5,13 +5,13 @@ from util.page_util import build_page_sql, get_total_count
 class HouseModel:
     @staticmethod
     def get_house_list(offset, size, keyword="", status=-1):
-        """分页查询房源（支持房号/地址搜索、状态筛选）"""
+        """分页查询房源（支持地址搜索、状态筛选）"""
         # 构建查询条件
         where_conditions = []
         params = []
         # 搜索关键词
         if keyword:
-            where_conditions.append("(house_no LIKE %s OR address LIKE %s)")
+            where_conditions.append("(address LIKE %s)")
             like_keyword = f"%{keyword}%"
             params.extend([like_keyword, like_keyword])
         # 状态筛选
@@ -45,23 +45,23 @@ class HouseModel:
         return total, list_data
 
     @staticmethod
-    def add_house(house_no, type_id, land_id, address, area, rent_price, deposit, facilities="", status=0):
+    def add_house(province, city, county, address, type_id, land_id, area, rent_price, facilities="", house_status=0):
         """新增房源"""
         sql = """
-        INSERT INTO house(house_no, type_id, land_id, address, area, rent_price, deposit, facilities, house_status) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO house(province, city, county, address, type_id, land_id, area, rent_price, facilities, house_status) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        return MySQLConnection.execute_sql(sql, (house_no, type_id, land_id, address, area, rent_price, deposit, facilities, status))
+        return MySQLConnection.execute_sql(sql, (province, city, county, address, type_id, land_id, area, rent_price, facilities, house_status))
 
     @staticmethod
-    def update_house(house_id, house_no, type_id, land_id, address, area, rent_price, deposit, facilities="", status=0):
+    def update_house(house_id, province, city, county, address, type_id, land_id, area, rent_price, facilities="", house_status=0):
         """修改房源"""
         sql = """
         UPDATE house 
-        SET house_no=%s, type_id=%s, land_id=%s, address=%s, area=%s, rent_price=%s, deposit=%s, facilities=%s, house_status=%s 
+        SET province=%s, city=%s, county=%s, address=%s, type_id=%s, land_id=%s, area=%s, rent_price=%s, facilities=%s, house_status=%s 
         WHERE house_id=%s
         """
-        return MySQLConnection.execute_sql(sql, (house_no, type_id, land_id, address, area, rent_price, deposit, facilities, status, house_id))
+        return MySQLConnection.execute_sql(sql, (province, city, county, address, type_id, land_id, area, rent_price, facilities, house_status, house_id))
 
     @staticmethod
     def delete_house(house_id):
@@ -88,10 +88,10 @@ class HouseModel:
         return MySQLConnection.execute_sql(sql, (house_id,), fetch_type="one")
     
     @staticmethod
-    def get_house_by_no(house_no):
-        """根据房号查询房源"""
-        sql = "SELECT * FROM house WHERE house_no = %s"
-        return MySQLConnection.execute_sql(sql, (house_no,), fetch_type="one")
+    def get_house_by_address(province, city, county, address):
+        """根据房屋地址查询房源"""
+        sql = "SELECT * FROM house WHERE province = %s AND city = %s AND county = %s AND address = %s"
+        return MySQLConnection.execute_sql(sql, (province, city, county, address), fetch_type="one")
     
     @staticmethod
     def update_house_status(house_id, status):
@@ -101,6 +101,6 @@ class HouseModel:
     
     @staticmethod
     def get_type_by_id(type_id):
-        """根据ID查询房源"""
+        """根据ID查询户型"""
         sql = "SELECT * FROM house_type WHERE type_id = %s"
         return MySQLConnection.execute_sql(sql, (type_id,), fetch_type="one")

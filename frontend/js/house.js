@@ -13,7 +13,6 @@ function loadTypeList() {
             <tr>
                 <td>${item.type_id}</td>
                 <td>${item.type_name}</td>
-                <td>${item.area_range || "-"}</td>
                 <td>${item.remark || "-"}</td>
                 <td>
                     <button class="btn-link" onclick="openEditModal(${item.type_id})">编辑</button>
@@ -30,7 +29,6 @@ function openAddModal() {
     document.getElementById("modalTitle").textContent = "新增户型";
     document.getElementById("typeId").value = "";
     document.getElementById("typeName").value = "";
-    document.getElementById("areaRange").value = "";
     document.getElementById("remark").value = "";
     typeModal.show();
 }
@@ -41,7 +39,6 @@ function openEditModal(id) {
         document.getElementById("modalTitle").textContent = "编辑户型";
         document.getElementById("typeId").value = res.type_id;
         document.getElementById("typeName").value = res.type_name;
-        document.getElementById("areaRange").value = res.area_range || "";
         document.getElementById("remark").value = res.remark || "";
         typeModal.show();
     });
@@ -52,7 +49,6 @@ function saveType() {
     const id = document.getElementById("typeId").value;
     const data = {
         type_name: document.getElementById("typeName").value.trim(),
-        area_range: document.getElementById("areaRange").value.trim(),
         remark: document.getElementById("remark").value.trim()
     };
 
@@ -101,10 +97,10 @@ function loadHouseList(page = 1) {
             const statusClass = ["status-success","status-warning","status-info","status-danger"][item.house_status];
             html += `
             <tr>
-                <td>${item.house_no}</td>
+                <td>${item.house_id}</td>
+                <td>${item.province + item.city + item.county + item.address}</td>
                 <td>${item.type_name}</td>
                 <td>${item.land_name}</td>
-                <td>${item.address}</td>
                 <td>${item.area}㎡</td>
                 <td>${formatMoney(item.rent_price)}</td>
                 <td><span class="status-tag ${statusClass}">${statusText}</span></td>
@@ -141,15 +137,16 @@ function openHouseEdit(id) {
     http.get("/house/" + id).then(res => {
         document.getElementById("houseModalTitle").textContent = "编辑房源";
         document.getElementById("houseId").value = res.house_id;
-        document.getElementById("houseNo").value = res.house_no;
+        document.getElementById("province").value = res.province;
+        document.getElementById("city").value = res.city;
+        document.getElementById("county").value = res.county;        
+        document.getElementById("address").value = res.address;
         document.getElementById("typeId").value = res.type_id;
         document.getElementById("landId").value = res.land_id;
-        document.getElementById("address").value = res.address;
         document.getElementById("area").value = res.area;
         document.getElementById("rentPrice").value = res.rent_price;
-        document.getElementById("deposit").value = res.deposit;
         document.getElementById("facilities").value = res.facilities || "";
-        document.getElementById("houseStatus").value = res.house_status;
+        document.getElementById("houseStatusSelect").value = res.house_status;
         new bootstrap.Modal(document.getElementById("houseModal")).show();
     });
 }
@@ -157,19 +154,31 @@ function openHouseEdit(id) {
 function saveHouse() {
     const id = document.getElementById("houseId").value;
     const data = {
-        house_no: document.getElementById("houseNo").value.trim(),
+        province: document.getElementById("province").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        county: document.getElementById("county").value.trim(),
+        address: document.getElementById("address").value.trim(),
         type_id: document.getElementById("typeId").value,
         land_id: document.getElementById("landId").value,
-        address: document.getElementById("address").value.trim(),
         area: document.getElementById("area").value,
         rent_price: document.getElementById("rentPrice").value,
-        deposit: document.getElementById("deposit").value,
         facilities: document.getElementById("facilities").value.trim(),
         status: document.getElementById("houseStatusSelect").value
     };
 
-    if (!data.house_no || !data.type_id || !data.land_id || !data.address) {
+    if (!data.type_id || !data.land_id || !data.province || !data.city || !data.county || !data.address) {
         alert("必填项不能为空");
+        return;
+    }
+
+    const area = Number(document.getElementById("area").value);
+    const rent = Number(document.getElementById("rentPrice").value);
+    if (isNaN(area) || area < 0) {
+        alert("建筑面积不能为负数");
+        return;
+    }
+    if (isNaN(rent) || rent < 0) {
+        alert("月租金不能为负数");
         return;
     }
 

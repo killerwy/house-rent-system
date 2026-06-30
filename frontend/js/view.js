@@ -12,11 +12,10 @@ function loadViewList(page = 1) {
                                item.房屋状态 === "已出租" ? "status-warning" : "status-info";
             html += `
             <tr>
-                <td>${item.房号}</td>
+                <td>${item.房屋地址}</td>
                 <td>${item.房东姓名}</td>
                 <td>${item.房东电话}</td>
                 <td>${item.户型}</td>
-                <td>${item.房屋地址}</td>
                 <td><span class="status-tag ${statusClass}">${item.房屋状态}</span></td>
                 <td>${formatMoney(item.月租金)}</td>
             </tr>`;

@@ -19,9 +19,9 @@ DROP TABLE IF EXISTS sys_user;
 CREATE TABLE sys_user(
     user_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
     username VARCHAR(30) NOT NULL UNIQUE COMMENT '登录账号',
-    password VARCHAR(60) NOT NULL COMMENT '密码加密存储',
+    password VARCHAR(60) NOT NULL COMMENT '密码',
     real_name VARCHAR(20) NOT NULL COMMENT '员工姓名',
-    phone VARCHAR(11) COMMENT '员工手机号',
+    phone VARCHAR(11) UNIQUE COMMENT '员工手机号',
     role_id INT NOT NULL COMMENT '关联角色',
     create_time DATETIME DEFAULT NOW(),
     FOREIGN KEY (role_id) REFERENCES sys_role(role_id) ON DELETE RESTRICT
@@ -36,11 +36,13 @@ DROP TABLE IF EXISTS house_type;
 CREATE TABLE house_type(
     type_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '户型ID',
     type_name VARCHAR(30) NOT NULL UNIQUE COMMENT '户型名称：一室一厅/两室一厅',
-    area_range VARCHAR(50) COMMENT '面积区间',
     remark VARCHAR(100) COMMENT '户型备注'
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='户型分类表';
-INSERT INTO house_type(type_name,area_range) VALUES
-('一室一厅','30-60㎡'),('两室一厅','60-90㎡'),('三室两厅','90-130㎡'),('四室及以上','130㎡+');
+INSERT INTO house_type(type_name,remark) VALUES
+('一室一厅','单卧室搭配独立客厅，整体面积偏小，功能紧凑，适合单身人士、情侣短期居住，租金与总价门槛低，日常打理轻松。'),
+('两室一厅','两间卧室 + 公共客厅，户型均衡实用，可满足小夫妻、三口之家居住，一间主卧自住、一间作儿童房 / 书房，兼顾私密与活动空间，市面主流刚需户型。'),
+('三室两厅','三间卧室 + 客厅、餐厅双厅布局，空间充足，适配多口家庭、三代同堂，可单独预留书房、储物间或客房，动线清晰，居家舒适度高，改善型主流户型。'),
+('四室及以上','≥4 间卧室，多配套双卫、储物间、衣帽间甚至入户花园，空间充裕，适合大家庭、长期居家，可划分独立办公、会客、儿童游乐分区，属于大平层 / 改善大宅户型。');
 
 -- 4. 房东表
 DROP TABLE IF EXISTS landlord;
@@ -58,16 +60,18 @@ CREATE INDEX idx_land_phone ON landlord(land_phone);
 DROP TABLE IF EXISTS house;
 CREATE TABLE house(
     house_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '房屋唯一ID',
-    house_no VARCHAR(50) NOT NULL UNIQUE COMMENT '房号（唯一标识）',
+    province VARCHAR(30) NOT NULL COMMENT '省',
+    city VARCHAR(30) NOT NULL COMMENT '市',
+    county VARCHAR(30) NOT NULL COMMENT '县',
+    address VARCHAR(100) NOT NULL COMMENT '房屋详细地址',
     type_id INT NOT NULL COMMENT '关联户型',
     land_id INT NOT NULL COMMENT '关联房东',
-    address VARCHAR(200) NOT NULL COMMENT '房屋详细地址',
     area DECIMAL(5,1) NOT NULL COMMENT '建筑面积',
     rent_price DECIMAL(10,2) NOT NULL COMMENT '月租金',
-    deposit DECIMAL(10,2) NOT NULL COMMENT '押金',
     house_status TINYINT DEFAULT 0 COMMENT '0空置 1已租 2维修 3下架',
     facilities TEXT COMMENT '配套设施',
     create_time DATETIME DEFAULT NOW(),
+	UNIQUE KEY uk_house_location (province, city, county, address),
     FOREIGN KEY (type_id) REFERENCES house_type(type_id) ON DELETE RESTRICT,
     FOREIGN KEY (land_id) REFERENCES landlord(land_id) ON DELETE RESTRICT
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='房源信息表';
@@ -125,11 +129,10 @@ CREATE INDEX idx_charge_contract ON charge_record(contract_id);
 DROP VIEW IF EXISTS v_house_all_info;
 CREATE VIEW v_house_all_info AS
 SELECT 
-    h.house_no AS 房号,
+    h.address AS 房屋地址,
     l.land_name AS 房东姓名,
     l.land_phone AS 房东电话,
     ht.type_name AS 户型,
-    h.address AS 房屋地址,
     CASE h.house_status
         WHEN 0 THEN '空置可租'
         WHEN 1 THEN '已出租'
@@ -171,9 +174,10 @@ BEGIN
         -- 自动新增3条收费记录：租金、押金、中介费
         INSERT INTO charge_record(contract_id,charge_type,charge_money,remark)
         VALUES
-        (NEW.contract_id, 1, NEW.real_rent, '房屋租金'),
+        (NEW.contract_id, 1, NEW.real_rent, '房屋租金收入'),
         (NEW.contract_id, 2, NEW.real_rent / 2, '租房押金'),
-        (NEW.contract_id, 3, NEW.real_rent / 5, '中介费');
+        (NEW.contract_id, 3, NEW.real_rent / 5, '中介费'),
+        (NEW.contract_id, 1, -NEW.real_rent, '房屋租金转出');
     END IF;
 END //
 
@@ -200,12 +204,12 @@ INSERT INTO landlord(land_name,land_phone,land_idcard,land_address) VALUES
 ('赵六','13800004444','340101199604044567','合肥市庐阳区沿河路公寓');
 
 -- ====================== 插入测试房源数据 ======================
-INSERT INTO house(house_no,type_id,land_id,address,area,rent_price,deposit,facilities,house_status) VALUES
-('A01-101',1,1,'蜀山区翡翠路幸福小区1栋101',45.5,1200.00,1200.00,'空调、热水器、床、衣柜',0),
-('A01-102',2,1,'蜀山区翡翠路幸福小区1栋102',72.0,1800.00,1800.00,'空调、冰箱、洗衣机、燃气',1),
-('B02-501',2,2,'高新区创新花园2栋501',85.0,2000.00,2000.00,'全套家电、宽带',0),
-('C03-1202',3,3,'包河区望江苑3栋1202',110.0,2600.00,2600.00,'三室两厅、中央空调',1),
-('D01-301',4,4,'庐阳沿河公馆1栋301',142.0,3200.00,3200.00,'四室、全屋家具',0);
+INSERT INTO house(province,city,county,address,type_id,land_id,area,rent_price,facilities,house_status) VALUES
+('安徽省','合肥市','蜀山区','翡翠路幸福小区1栋101',1,1,45.5,1200.00,'空调、热水器、床、衣柜',0),
+('安徽省','合肥市','蜀山区','翡翠路幸福小区1栋102',2,1,72.0,1800.00,'空调、冰箱、洗衣机、燃气',1),
+('安徽省','合肥市','高新区','创新花园2栋501',2,2,85.0,2000.00,'全套家电、宽带',0),
+('安徽省','合肥市','包河区','望江苑3栋1202',3,3,110.0,2600.00,'三室两厅、中央空调',1),
+('安徽省','合肥市','庐阳区','沿河公馆1栋301',4,4,142.0,3200.00,'四室、全屋家具',0);
 
 -- ====================== 插入测试租客数据 ======================
 INSERT INTO customer(cust_name,cust_phone,cust_idcard,work_unit) VALUES
@@ -216,18 +220,9 @@ INSERT INTO customer(cust_name,cust_phone,cust_idcard,work_unit) VALUES
 -- ====================== 插入租赁合同（租住中/已退租各一条，触发器自动改房源状态） ======================
 -- 操作员都是admin（user_id=1）
 INSERT INTO rent_contract(house_id,cust_id,start_date,end_date,real_rent,contract_status,return_date,operator_id) VALUES
-(2,1,'2026-01-10','2027-01-09',1800.00,0,NULL,1),  -- A01-102 出租中，触发器自动变为已租
-(4,2,'2025-06-01','2026-06-01',2600.00,0,NULL,1);  -- C03-1202 出租中，触发器自动变为已租
+(2,1,'2026-01-10','2027-01-09',1800.00,0,NULL,1),  -- 出租中，触发器自动变为已租
+(4,2,'2025-06-01','2026-06-01',2600.00,0,NULL,1);  -- 出租中，触发器自动变为已租
 
 UPDATE rent_contract 
 SET contract_status = 1, return_date = '2026-06-02'
-WHERE contract_id = 2;  -- C03-1202 已退租，更新后房源自动变回空置
-
--- ====================== 插入收费记录（租金、押金、中介费） ======================
-#INSERT INTO charge_record(contract_id,charge_type,charge_money,remark) VALUES
--- 合同1（租住中）缴费
-#(1,1,1800.00,'房屋租金'),
-#(1,2,900.00,'租房押金'),
-#(1,3,360.00,'中介费'),
--- 合同2（已退租）历史缴费
-#(2,2,900.00,'租房押金退还')
+WHERE contract_id = 2;  -- 已退租，更新后房源自动变回空置

@@ -16,7 +16,7 @@ function loadChargeList(page = 1) {
             <tr>
                 <td>${item.charge_id}</td>
                 <td>${item.contract_id}</td>
-                <td>${item.house_no}</td>
+                <td>${item.province + item.city + item.county + item.address}</td>
                 <td>${item.cust_name}</td>
                 <td>${typeMap[item.charge_type]}</td>
                 <td>${formatMoney(item.charge_money)}</td>
@@ -39,7 +39,7 @@ function openAddModal() {
     http.get("/rent/list", { params: { page:1, size:1000, status:0 } }).then(res => {
         let html = '<option value="">请选择租赁合同</option>';
         res.list.forEach(item => {
-            html += `<option value="${item.contract_id}">合同${item.contract_id} - ${item.house_no} - ${item.cust_name}</option>`;
+            html += `<option value="${item.contract_id}">合同${item.contract_id} - ${item.province + item.city + item.county + item.address} - ${item.cust_name}</option>`;
         });
         document.getElementById("contractSelect").innerHTML = html;
     });
