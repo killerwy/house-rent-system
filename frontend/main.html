@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>二手房中介管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+</head>
+<body>
+    <div class="main-layout">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-logo">中介管理系统</div>
+            <div class="sidebar-menu" id="menuContainer">
+                <!-- 菜单由JS动态渲染，根据权限显示 -->
+            </div>
+        </div>
+
+        <!-- 右侧主内容 -->
+        <div class="main-content">
+            <div class="top-header">
+                <div>
+                    <span id="pageTitle">首页总览</span>
+                </div>
+                <div class="header-user">
+                    <span id="userName">管理员</span>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+            <iframe id="contentFrame" class="content-frame" src="pages/stat_page.html"></iframe>
+        </div>
+    </div>
+
+    <script src="js/axios.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // 检查登录
+        if (!checkLogin()) {
+            throw new Error("未登录");
+        }
+
+        const user = getCurrentUser();
+        document.getElementById("userName").textContent = user.real_name;
+
+        // 菜单配置
+        const menuConfig = [
+            { group: "数据统计", items: [
+                { title: "户型出租统计", url: "pages/stat_page.html", perm: "stat" },
+                { title: "房屋总览视图", url: "pages/house_view.html", perm: "view" }
+            ]},
+            { group: "房源管理", items: [
+                { title: "户型管理", url: "pages/house_type.html", perm: "house" },
+                { title: "房源信息", url: "pages/house_list.html", perm: "house" }
+            ]},
+            { group: "人员管理", items: [
+                { title: "房东信息", url: "pages/landlord_list.html", perm: "landlord" },
+                { title: "租客信息", url: "pages/customer_list.html", perm: "customer" }
+            ]},
+            { group: "租赁业务", items: [
+                { title: "出租登记", url: "pages/rent_add.html", perm: "rent" },
+                { title: "租赁合同", url: "pages/rent_list.html", perm: "rent" },
+                { title: "收费记录", url: "pages/charge_list.html", perm: "charge" }
+            ]},
+            { group: "系统管理", items: [
+                { title: "员工账号", url: "pages/sys_user.html", perm: "all" },
+                { title: "备份恢复", url: "pages/backup_manage.html", perm: "all" }
+            ]}
+        ];
+
+        // 渲染菜单
+        function renderMenu() {
+            const container = document.getElementById("menuContainer");
+            let html = "";
+            menuConfig.forEach(group => {
+                // 过滤有权限的菜单项
+                const validItems = group.items.filter(item => hasPermission(item.perm));
+                if (validItems.length === 0) return;
+
+                html += `<div class="menu-group-title">${group.group}</div>`;
+                validItems.forEach(item => {
+                    html += `<div class="menu-item sub" onclick="switchPage('${item.title}', '${item.url}', this)">${item.title}</div>`;
+                });
+            });
+            container.innerHTML = html;
+        }
+
+        // 切换页面
+        function switchPage(title, url, el) {
+            document.getElementById("pageTitle").textContent = title;
+            document.getElementById("contentFrame").src = url;
+            // 高亮选中
+            document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+            if (el) el.classList.add("active");
+        }
+
+        renderMenu();
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>数据库备份与恢复</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/table.css">
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-title">数据库备份与恢复</div>
+
+        <div class="toolbar">
+            <div class="text-muted">提示：备份文件保存在项目 backup 目录下</div>
+            <div>
+                <button class="btn btn-primary" onclick="doBackup()">一键备份数据库</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>文件名</th>
+                        <th>创建时间</th>
+                        <th width="200">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="backupTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/backup.js"></script>
+    <script>
+        window.onload = function() {
+            loadBackupList();
+        };
+    </script>
+</body>
+</html>

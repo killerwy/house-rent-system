@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 - 二手房中介管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2 class="login-title">二手房中介管理系统</h2>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label">登录账号</label>
+                    <input type="text" id="username" class="form-control" placeholder="请输入账号" value="admin">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">登录密码</label>
+                    <input type="password" id="password" class="form-control" placeholder="请输入密码" value="123456">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">登 录</button>
+                <p class="text-center text-muted mt-3" style="font-size:12px;">
+                    默认账号：admin / 123456
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/axios.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // 已登录直接跳主页
+        if (localStorage.getItem("access_token")) {
+            window.location.href = "main.html";
+        }
+
+        document.getElementById("loginForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            
+            if (!username || !password) {
+                alert("账号和密码不能为空");
+                return;
+            }
+
+            try {
+                const res = await login(username, password);
+                // 保存token和用户信息
+                localStorage.setItem("access_token", res.token);
+                localStorage.setItem("user_info", JSON.stringify(res.user_info));
+                alert("登录成功");
+                window.location.href = "main.html";
+            } catch (err) {
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>

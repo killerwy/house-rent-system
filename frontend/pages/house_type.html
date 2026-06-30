@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>户型管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/table.css">
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-title">户型管理</div>
+
+        <div class="toolbar">
+            <div></div>
+            <div>
+                <button class="btn btn-primary btn-sm" id="addBtn" onclick="openAddModal()">+ 新增户型</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>户型名称</th>
+                        <th>面积区间</th>
+                        <th>备注</th>
+                        <th width="180">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 新增/编辑弹窗 -->
+    <div class="modal fade" id="typeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">新增户型</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-form">
+                    <input type="hidden" id="typeId">
+                    <div class="form-group">
+                        <label>户型名称 <span style="color:red">*</span></label>
+                        <input type="text" id="typeName" placeholder="如：两室一厅">
+                    </div>
+                    <div class="form-group">
+                        <label>面积区间</label>
+                        <input type="text" id="areaRange" placeholder="如：60-90㎡">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="remark" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveType()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/house.js"></script>
+    <script>
+        // 权限控制：只读用户隐藏操作按钮
+        window.addEventListener("load", function(){
+            if (!hasPermission("house")) {
+                document.getElementById("addBtn").style.display = "none";
+            }
+            loadTypeList();
+        })
+    </script>
+</body>
+</html>

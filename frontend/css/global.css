@@ -1,0 +1,158 @@
+/* 全局重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+/* 登录页样式 */
+.login-container {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login-box {
+    width: 400px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.login-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* 主框架样式 */
+.main-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+/* 侧边栏 */
+.sidebar {
+    width: 220px;
+    background: #2c3e50;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-logo {
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    background: #1a252f;
+    border-bottom: 1px solid #34495e;
+}
+.sidebar-menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+.menu-group-title {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: #95a5a6;
+    margin-top: 10px;
+}
+.menu-item {
+    display: block;
+    padding: 10px 30px;
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.menu-item:hover, .menu-item.active {
+    background: #34495e;
+    color: #3498db;
+    border-left: 3px solid #3498db;
+}
+.menu-item.sub {
+    padding-left: 45px;
+    font-size: 13px;
+}
+
+/* 右侧主内容区 */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.top-header {
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #e4e7ed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.content-frame {
+    flex: 1;
+    border: none;
+    width: 100%;
+    background: #f5f7fa;
+}
+
+/* 通用卡片 */
+.page-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.page-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* 状态标签 */
+.status-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+.status-success { background: #f0f9eb; color: #67c23a; }
+.status-warning { background: #fdf6ec; color: #e6a23c; }
+.status-danger { background: #fef0f0; color: #f56c6c; }
+.status-info { background: #f4f4f5; color: #909399; }
+
+/* 工具条 */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.search-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>房东管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/table.css">
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-title">房东信息管理</div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="keyword" class="form-control form-control-sm" placeholder="搜索姓名/手机号" style="width:200px;">
+                <button class="btn btn-sm btn-primary" onclick="searchLandlord()">搜索</button>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-sm" id="addBtn" onclick="openAddModal()">+ 新增房东</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>姓名</th>
+                        <th>手机号</th>
+                        <th>身份证号</th>
+                        <th>常住地址</th>
+                        <th>创建时间</th>
+                        <th width="160">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <!-- 编辑弹窗 -->
+    <div class="modal fade" id="landlordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">新增房东</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-form">
+                    <input type="hidden" id="landId">
+                    <div class="form-group">
+                        <label>姓名 <span style="color:red">*</span></label>
+                        <input type="text" id="landName">
+                    </div>
+                    <div class="form-group">
+                        <label>手机号 <span style="color:red">*</span></label>
+                        <input type="text" id="landPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>身份证号</label>
+                        <input type="text" id="landIdcard">
+                    </div>
+                    <div class="form-group">
+                        <label>常住地址</label>
+                        <input type="text" id="landAddress">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveLandlord()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/landlord.js"></script>
+    <script>
+        window.onload = function() {
+            if (!hasPermission("landlord")) {
+                document.getElementById("addBtn").style.display = "none";
+            }
+            loadList();
+        };
+    </script>
+</body>
+</html>

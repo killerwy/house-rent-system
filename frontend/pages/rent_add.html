@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>房屋出租登记</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+    <div class="page-card" style="max-width: 800px; margin: 30px auto;">
+        <div class="page-title">房屋出租登记</div>
+        <form class="modal-form" id="rentForm">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label>选择房屋 <span style="color:red">*</span></label>
+                    <select id="houseSelect">
+                        <option value="">请选择空置房源</option>
+                    </select>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label>选择租客 <span style="color:red">*</span></label>
+                    <select id="custSelect">
+                        <option value="">请选择租客</option>
+                    </select>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label>起租日期 <span style="color:red">*</span></label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label>到期日期 <span style="color:red">*</span></label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label>实际月租金(元) <span style="color:red">*</span></label>
+                    <input type="number" id="realRent" step="0.01">
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="button" class="btn btn-secondary" onclick="history.back()">返回</button>
+                <button type="button" class="btn btn-primary ms-3" onclick="submitRent()">提交出租登记</button>
+            </div>
+            <p class="text-muted mt-3 text-center" style="font-size:12px;">
+                提交后系统将自动修改房屋状态为「已出租」
+            </p>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/rent.js"></script>
+    <script>
+        window.onload = function() {
+            loadEmptyHouseList();
+            loadCustomerList();
+            // 默认起租日期为今天
+            document.getElementById("startDate").valueAsDate = new Date();
+        };
+    </script>
+</body>
+</html>

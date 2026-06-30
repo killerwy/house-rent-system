@@ -1,0 +1,97 @@
+/* 表格样式 */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.table th {
+    background: #f8f9fa;
+    padding: 12px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #606266;
+    border-bottom: 2px solid #ebeef5;
+}
+.table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #ebeef5;
+}
+.table tr:hover {
+    background: #f5f7fa;
+}
+
+/* 分页 */
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+.pagination button {
+    min-width: 32px;
+    height: 32px;
+    border: 1px solid #dcdfe6;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+.pagination button.active {
+    background: #409eff;
+    color: #fff;
+    border-color: #409eff;
+}
+.pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.page-total {
+    font-size: 13px;
+    color: #606266;
+    margin-right: 10px;
+}
+
+/* 操作按钮 */
+.btn-link {
+    background: none;
+    border: none;
+    color: #409eff;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0 5px;
+}
+.btn-link:hover {
+    text-decoration: underline;
+}
+.btn-link.danger {
+    color: #f56c6c;
+}
+
+/* 表单弹窗 */
+.modal-form .form-group {
+    margin-bottom: 15px;
+}
+.modal-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #606266;
+}
+.modal-form input, .modal-form select, .modal-form textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.modal-form input:focus, .modal-form select:focus {
+    outline: none;
+    border-color: #409eff;
+}

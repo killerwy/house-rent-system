@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>员工账号管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/table.css">
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-title">员工账号管理</div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="keyword" class="form-control form-control-sm" placeholder="搜索账号/姓名" style="width:200px;">
+                <button class="btn btn-sm btn-primary" onclick="searchUser()">搜索</button>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ 新增员工</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>登录账号</th>
+                        <th>姓名</th>
+                        <th>手机号</th>
+                        <th>角色</th>
+                        <th>创建时间</th>
+                        <th width="200">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody"></tbody>
+            </table>
+        </div>
+        <div id="userPagination" class="pagination"></div>
+    </div>
+
+    <!-- 新增/编辑员工弹窗 -->
+    <div class="modal fade" id="userModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalTitle">新增员工</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-form">
+                    <input type="hidden" id="userId">
+                    <div class="form-group">
+                        <label>登录账号 <span style="color:red">*</span></label>
+                        <input type="text" id="username">
+                    </div>
+                    <div class="form-group" id="pwdGroup">
+                        <label>初始密码 <span style="color:red">*</span></label>
+                        <input type="password" id="password" placeholder="新增时必填">
+                    </div>
+                    <div class="form-group">
+                        <label>姓名 <span style="color:red">*</span></label>
+                        <input type="text" id="realName">
+                    </div>
+                    <div class="form-group">
+                        <label>手机号</label>
+                        <input type="text" id="phone">
+                    </div>
+                    <div class="form-group">
+                        <label>角色 <span style="color:red">*</span></label>
+                        <select id="roleId">
+                            <option value="2">中介员工</option>
+                            <option value="3">只读员工</option>
+                            <option value="1">超级管理员</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUser()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改密码弹窗 -->
+    <div class="modal fade" id="pwdModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">修改密码</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-form">
+                    <input type="hidden" id="pwdUserId">
+                    <div class="form-group">
+                        <label>新密码 <span style="color:red">*</span></label>
+                        <input type="password" id="newPassword">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="submitPwd()">确认修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/user.js"></script>
+    <script>
+        window.onload = function() {
+            loadUserList();
+        };
+    </script>
+</body>
+</html>

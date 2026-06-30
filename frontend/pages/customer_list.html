@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>租客管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/table.css">
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-title">租客信息管理</div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="keyword" class="form-control form-control-sm" placeholder="搜索姓名/手机号" style="width:200px;">
+                <button class="btn btn-sm btn-primary" onclick="searchCustomer()">搜索</button>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-sm" id="addBtn" onclick="openAddModal()">+ 新增租客</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>姓名</th>
+                        <th>手机号</th>
+                        <th>身份证号</th>
+                        <th>工作单位</th>
+                        <th>创建时间</th>
+                        <th width="160">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <!-- 编辑弹窗 -->
+    <div class="modal fade" id="customerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">新增租客</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-form">
+                    <input type="hidden" id="custId">
+                    <div class="form-group">
+                        <label>姓名 <span style="color:red">*</span></label>
+                        <input type="text" id="custName">
+                    </div>
+                    <div class="form-group">
+                        <label>手机号 <span style="color:red">*</span></label>
+                        <input type="text" id="custPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>身份证号</label>
+                        <input type="text" id="custIdcard">
+                    </div>
+                    <div class="form-group">
+                        <label>工作单位</label>
+                        <input type="text" id="workUnit">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveCustomer()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/customer.js"></script>
+    <script>
+        window.onload = function() {
+            if (!hasPermission("customer")) {
+                document.getElementById("addBtn").style.display = "none";
+            }
+            loadList();
+        };
+    </script>
+</body>
+</html>

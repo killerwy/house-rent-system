@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>房屋总览视图</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/table.css">
+</head>
+<body>
+    <div class="page-card">
+        <div class="page-title">房屋总览视图（数据库视图查询）</div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="keyword" class="form-control form-control-sm" placeholder="搜索房号/房东/地址" style="width:250px;">
+                <button class="btn btn-sm btn-primary" onclick="searchView()">搜索</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>房号</th>
+                        <th>房东姓名</th>
+                        <th>房东电话</th>
+                        <th>户型</th>
+                        <th>房屋地址</th>
+                        <th>房屋状态</th>
+                        <th>月租金</th>
+                    </tr>
+                </thead>
+                <tbody id="viewTableBody"></tbody>
+            </table>
+        </div>
+        <div id="viewPagination" class="pagination"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/view.js"></script>
+    <script>
+        window.onload = function() {
+            loadViewList();
+        };
+    </script>
+</body>
+</html>
