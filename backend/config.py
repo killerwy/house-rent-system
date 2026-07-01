@@ -28,6 +28,6 @@ if not os.path.exists(BACKUP_PATH):
 # 角色权限映射
 ROLE_PERMISSIONS = {
     1: ["all"],  # 超级管理员
-    2: ["house", "landlord", "customer", "rent", "charge", "stat", "view"],  # 中介员工
-    3: ["view", "stat"]  # 只读员工
+    2: ["house", "landlord", "customer", "rent", "charge", "stat", "view", "common"],  # 中介员工
+    3: ["view", "stat", "common"]  # 
 }

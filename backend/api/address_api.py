@@ -8,7 +8,7 @@ address_api = Blueprint("address_api", __name__, url_prefix="/api/address")
 
 # 获取所有省份
 @address_api.route("/province/list", methods=["GET"])
-@permission_required("house")
+@permission_required("common")
 def get_province_list():
     sql = "SELECT DISTINCT province FROM house WHERE province != '' ORDER BY province"
     data = MySQLConnection.execute_sql(sql, [], fetch_type="all")
@@ -17,7 +17,7 @@ def get_province_list():
 
 # 获取城市（可传province筛选对应省的城市）
 @address_api.route("/city/list", methods=["GET"])
-@permission_required("house")
+@permission_required("common")
 def get_city_list():
     province = request.args.get("province", "").strip()
     sql = "SELECT DISTINCT city FROM house WHERE city != ''"
@@ -32,7 +32,7 @@ def get_city_list():
 
 # 获取区县（可传province、city筛选）
 @address_api.route("/county/list", methods=["GET"])
-@permission_required("house")
+@permission_required("common")
 def get_county_list():
     province = request.args.get("province", "").strip()
     city = request.args.get("city", "").strip()

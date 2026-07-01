@@ -10,7 +10,7 @@ house_api = Blueprint("house_api", __name__, url_prefix="/api/house")
 
 # ---------------------- 户型管理 ----------------------
 @house_api.route("/type/list", methods=["GET"])
-@permission_required("house")
+@permission_required("common")
 def get_type_list():
     """查询所有户型"""
     data = HouseTypeModel.get_type_list()
