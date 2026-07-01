@@ -13,8 +13,31 @@
 
         <div class="toolbar">
             <div class="search-box">
-                <input type="text" id="keyword" class="form-control form-control-sm" placeholder="搜索房东/地址" style="width:250px;">
+                <input type="text" id="keyword" class="form-control form-control-sm" placeholder="搜索地址/房东" style="width:250px;">
+                <!-- 省市区下拉筛选 -->
+                <select id="provinceSelectView" class="form-select form-select-sm" style="width:110px;" onchange="searchView()">
+                    <option value="">全部省份</option>
+                </select>
+                <select id="citySelectView" class="form-select form-select-sm" style="width:110px;" onchange="searchView()">
+                    <option value="">全部城市</option>
+                </select>
+                <select id="countySelectView" class="form-select form-select-sm" style="width:110px;" onchange="searchView()">
+                    <option value="">全部区县</option>
+                </select>
+                <!-- 户型下拉筛选 -->
+                <select id="typeSelectView" class="form-select form-select-sm" style="width:130px;" onchange="searchView()">
+                    <option value="">全部户型</option>
+                </select>
+                <select id="houseStatusView" class="form-select form-select-sm" style="width:120px;" onchange="searchView()">
+                    <option value="">全部状态</option>
+                    <option value="空置可租">空置可租</option>
+                    <option value="已出租">已出租</option>
+                    <option value="维修中">维修中</option>
+                    <option value="已下架">已下架</option>
+                </select>
                 <button class="btn btn-sm btn-primary" onclick="searchView()">搜索</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="resetViewSearch()">重置</button>
+
             </div>
         </div>
 
@@ -42,6 +65,10 @@
     <script src="../js/view.js"></script>
     <script>
         window.onload = function() {
+            loadProvinceSelectView();
+            loadCitySelectView();
+            loadCountySelectView();
+            loadTypeSelectView(); // 加载户型筛选下拉
             loadViewList();
         };
     </script>

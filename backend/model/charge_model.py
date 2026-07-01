@@ -4,14 +4,15 @@ from util.page_util import build_page_sql, get_total_count
 
 class ChargeModel:
     @staticmethod
-    def get_charge_list(offset, size, contract_id=-1, charge_type=-1):
+    def get_charge_list(offset, size, keyword="", charge_type=-1):
         """分页查询收费记录（支持合同ID、收费类型筛选）"""
         # 构建条件
         where_conditions = []
         params = []
-        if contract_id != -1:
-            where_conditions.append("contract_id = %s")
-            params.append(contract_id)
+        if keyword:
+            where_conditions.append("(cr.contract_id LIKE %s OR c.cust_name LIKE %s)")
+            like_keyword = f"%{keyword}%"
+            params.extend([like_keyword, like_keyword])
         if charge_type != -1:
             where_conditions.append("charge_type = %s")
             params.append(charge_type)
@@ -30,6 +31,8 @@ class ChargeModel:
         # 计数SQL
         count_sql = f"""
         SELECT COUNT(*) as total FROM charge_record cr
+        LEFT JOIN rent_contract rc ON cr.contract_id = rc.contract_id
+        LEFT JOIN customer c ON rc.cust_id = c.cust_id
         {where_sql}
         """
         

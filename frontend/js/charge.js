@@ -1,4 +1,5 @@
 let chargePage = getPageParams();
+let chargeKeyword = "";
 let chargeTypeFilter = -1;
 
 const typeMap = { 1: "租金", 2: "押金", 3: "中介费" };
@@ -6,7 +7,7 @@ const typeMap = { 1: "租金", 2: "押金", 3: "中介费" };
 function loadChargeList(page = 1) {
     chargePage.page = page;
     http.get("/charge/list", { 
-        params: { page: chargePage.page, size: chargePage.size, charge_type: chargeTypeFilter } 
+        params: { page: chargePage.page, size: chargePage.size, keyword: chargeKeyword, charge_type: chargeTypeFilter } 
     }).then(res => {
         chargePage.total = res.total;
         const tbody = document.getElementById("chargeTableBody");
@@ -30,6 +31,7 @@ function loadChargeList(page = 1) {
 }
 
 function searchCharge() {
+    chargeKeyword = document.getElementById("chargeKeyword").value;
     chargeTypeFilter = document.getElementById("chargeType").value;
     loadChargeList(1);
 }

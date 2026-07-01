@@ -4,16 +4,32 @@ from util.page_util import build_page_sql, get_total_count
 
 class HouseModel:
     @staticmethod
-    def get_house_list(offset, size, keyword="", status=-1):
+    def get_house_list(offset, size, keyword="", status=-1, province="", city="", county="", type_id=-1):
         """分页查询房源（支持地址搜索、状态筛选）"""
         # 构建查询条件
         where_conditions = []
         params = []
         # 搜索关键词
         if keyword:
-            where_conditions.append("(address LIKE %s)")
+            where_conditions.append("(province LIKE %s OR city LIKE %s OR county LIKE %s OR address LIKE %s OR l.land_name LIKE %s)")
             like_keyword = f"%{keyword}%"
-            params.extend([like_keyword, like_keyword])
+            params.extend([like_keyword, like_keyword, like_keyword, like_keyword, like_keyword])
+        # 省精确筛选
+        if province:
+            where_conditions.append("province = %s")
+            params.append(province)
+        # 市精确筛选
+        if city:
+            where_conditions.append("city = %s")
+            params.append(city)
+        # 区县精确筛选
+        if county:
+            where_conditions.append("county = %s")
+            params.append(county)
+        # 户型筛选
+        if type_id != -1:
+            where_conditions.append("h.type_id = %s")
+            params.append(type_id)
         # 状态筛选
         if status != -1:
             where_conditions.append("house_status = %s")
@@ -33,6 +49,7 @@ class HouseModel:
         # 计数SQL
         count_sql = f"""
         SELECT COUNT(*) as total FROM house h
+        LEFT JOIN landlord l ON h.land_id = l.land_id
         {where_sql}
         """
         

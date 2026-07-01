@@ -13,16 +13,42 @@ def get_house_all_view():
     """查询房屋总览视图（地址+房东+状态），支持分页、关键词搜索"""
     page, size, offset = get_page_params(request)
     keyword = request.args.get("keyword", "")
-    
+    status = request.args.get("status", "").strip()
+    type_name = request.args.get("type_name", "").strip()
+    province = request.args.get("province", "").strip()
+    city = request.args.get("city", "").strip()
+    county = request.args.get("county", "").strip()
+
     # 构建查询条件
-    where_sql = ""
+    where_conditions = []
     params = []
+    # 省精确筛选
+    if province:
+        where_conditions.append("省份 = %s")
+        params.append(province)
+    # 市精确筛选
+    if city:
+        where_conditions.append("城市 = %s")
+        params.append(city)
+    # 区县精确筛选
+    if county:
+        where_conditions.append("区县 = %s")
+        params.append(county)
+    # 户型筛选
+    if type_name:
+        where_conditions.append("户型 = %s")
+        params.append(type_name)
+    # 状态筛选
+    if status:
+        where_conditions.append("房屋状态 = %s")
+        params.append(status)
     if keyword:
-        where_sql = " WHERE 房屋地址 LIKE %s OR 房东姓名 LIKE %s "
+        where_conditions.append("(省份 LIKE %s OR 城市 LIKE %s OR 区县 LIKE %s OR 房屋地址 LIKE %s OR 房东姓名 LIKE %s)")
         like_key = f"%{keyword}%"
-        params = [like_key, like_key, like_key]
+        params.extend([like_key, like_key, like_key, like_key, like_key])
     
-    # 基础查询SQL（基于视图）
+    # 拼接WHERE
+    where_sql = " WHERE " + " AND ".join(where_conditions) if where_conditions else ""
     base_sql = f"SELECT * FROM v_house_all_info {where_sql}"
     count_sql = f"SELECT COUNT(*) as total FROM v_house_all_info {where_sql}"
     

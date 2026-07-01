@@ -15,6 +15,7 @@ from api.charge_api import charge_api
 from api.stat_api import stat_api
 from api.view_api import view_api
 from api.backup_api import backup_api
+from api.address_api import address_api
 
 # 初始化Flask应用
 app = Flask(__name__)
@@ -38,6 +39,7 @@ app.register_blueprint(charge_api)
 app.register_blueprint(stat_api)
 app.register_blueprint(view_api)
 app.register_blueprint(backup_api)
+app.register_blueprint(address_api)
 
 # 根路径测试
 @app.route("/")

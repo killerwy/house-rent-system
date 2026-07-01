@@ -35,6 +35,10 @@ def add_user():
     if UserModel.get_user_by_username(username):
         return fail(msg="账号已存在", code=400)
     
+    # 校验手机号重复
+    if phone and UserModel.get_user_by_phone(phone):
+        return fail(msg="该手机号已被注册", code=400)
+
     # 新增
     result = UserModel.add_user(username, password, real_name, phone, role_id)
     if result > 0:
@@ -55,6 +59,10 @@ def update_user():
     if not user_id or not real_name or not role_id:
         return fail(msg="必填参数不能为空", code=400)
     
+    exist = UserModel.get_user_by_phone(phone)
+    if exist and exist["user_id"] != user_id:
+        return fail(msg="该手机号已被其他员工使用", code=400)
+
     result = UserModel.update_user(user_id, real_name, phone, role_id)
     if result > 0:
         return success(msg="修改员工成功")

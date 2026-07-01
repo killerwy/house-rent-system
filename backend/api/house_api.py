@@ -79,8 +79,12 @@ def get_house_list():
     page, size, offset = get_page_params(request)
     keyword = request.args.get("keyword", "")
     status = request.args.get("status", -1, type=int)
-    
-    total, list_data = HouseModel.get_house_list(offset, size, keyword, status)
+    province = request.args.get("province", "").strip()
+    city = request.args.get("city", "").strip()
+    county = request.args.get("county", "").strip()
+    type_id = request.args.get("type_id", -1, type=int)
+
+    total, list_data = HouseModel.get_house_list(offset, size, keyword, status, province, city, county, type_id)
     return page_success(total, list_data)
 
 @house_api.route("/add", methods=["POST"])

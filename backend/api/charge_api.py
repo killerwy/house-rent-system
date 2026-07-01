@@ -13,10 +13,10 @@ charge_api = Blueprint("charge_api", __name__, url_prefix="/api/charge")
 def get_charge_list():
     """分页查询收费记录"""
     page, size, offset = get_page_params(request)
-    contract_id = request.args.get("contract_id", -1, type=int)
+    keyword = request.args.get("keyword", "")
     charge_type = request.args.get("charge_type", -1, type=int)
     
-    total, list_data = ChargeModel.get_charge_list(offset, size, contract_id, charge_type)
+    total, list_data = ChargeModel.get_charge_list(offset, size, keyword, charge_type)
     return page_success(total, list_data)
 
 @charge_api.route("/add", methods=["POST"])

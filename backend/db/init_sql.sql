@@ -128,7 +128,11 @@ CREATE INDEX idx_charge_contract ON charge_record(contract_id);
 -- 9. 视图：查询房屋完整信息
 DROP VIEW IF EXISTS v_house_all_info;
 CREATE VIEW v_house_all_info AS
-SELECT 
+SELECT
+
+    h.province AS 省份,
+    h.city AS 城市,
+    h.county AS 区县, 
     h.address AS 房屋地址,
     l.land_name AS 房东姓名,
     l.land_phone AS 房东电话,

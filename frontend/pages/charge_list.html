@@ -13,13 +13,14 @@
 
         <div class="toolbar">
             <div class="search-box">
-                <select id="chargeType" class="form-select form-select-sm" style="width:120px;">
+                <input type="text" id="chargeKeyword" class="form-control form-control-sm" placeholder="搜索关联合同/租客" style="width:200px;">
+                <select id="chargeType" class="form-select form-select-sm" style="width:120px;" onchange="searchCharge()">
                     <option value="-1">全部类型</option>
                     <option value="1">租金</option>
                     <option value="2">押金</option>
                     <option value="3">中介费</option>
                 </select>
-                <button class="btn btn-sm btn-primary" onclick="searchCharge()">筛选</button>
+                <button class="btn btn-sm btn-primary" onclick="searchCharge()">搜索</button>
             </div>
             <div>
                 <button class="btn btn-primary btn-sm" id="addChargeBtn" onclick="openAddModal()">+ 新增收费</button>

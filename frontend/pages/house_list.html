@@ -13,8 +13,24 @@
 
         <div class="toolbar">
             <div class="search-box">
-                <input type="text" id="houseKeyword" class="form-control form-control-sm" placeholder="搜索地址" style="width:200px;">
-                <select id="houseStatus" class="form-select form-select-sm" style="width:120px;">
+                <input type="text" id="houseKeyword" class="form-control form-control-sm" placeholder="搜索地址/房东" style="width:200px;">
+                <!-- 省下拉 -->
+                <select id="provinceSelect" class="form-select form-select-sm" style="width:110px;" onchange="searchHouse()">
+                    <option value="">全部省份</option>
+                </select>
+                <!-- 市下拉 -->
+                <select id="citySelect" class="form-select form-select-sm" style="width:110px;" onchange="searchHouse()">
+                    <option value="">全部城市</option>
+                </select>
+                <!-- 区县下拉 -->
+                <select id="countySelect" class="form-select form-select-sm" style="width:110px;" onchange="searchHouse()">
+                    <option value="">全部区县</option>
+                </select>
+                <!-- 户型下拉 -->
+                <select id="typeSelect" class="form-select form-select-sm" style="width:130px;" onchange="searchHouse()">
+                    <option value="-1">全部户型</option>
+                </select>
+                <select id="houseStatus" class="form-select form-select-sm" style="width:120px;" onchange="searchHouse()">
                     <option value="-1">全部状态</option>
                     <option value="0">空置可租</option>
                     <option value="1">已出租</option>
@@ -22,6 +38,7 @@
                     <option value="3">已下架</option>
                 </select>
                 <button class="btn btn-sm btn-primary" onclick="searchHouse()">搜索</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="resetSearch()">重置</button>
             </div>
             <div>
                 <button class="btn btn-primary btn-sm" id="addHouseBtn" onclick="openHouseAdd()">+ 新增房源</button>
@@ -123,6 +140,10 @@
             if (!hasPermission("house")) {
                 document.getElementById("addHouseBtn").style.display = "none";
             }
+            loadProvinceSelect();
+            loadCitySelect();
+            loadCountySelect();
+            loadTypeFilterSelect();
             loadHouseList();
         };
     </script>

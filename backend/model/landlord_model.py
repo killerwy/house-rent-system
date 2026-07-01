@@ -9,17 +9,17 @@ class LandlordModel:
         # 基础查询SQL
         base_sql = """
         SELECT * FROM landlord 
-        WHERE land_name LIKE %s OR land_phone LIKE %s 
+        WHERE land_name LIKE %s OR land_phone LIKE %s OR land_idcard LIKE %s
         ORDER BY land_id DESC
         """
         # 计数SQL
         count_sql = """
         SELECT COUNT(*) as total FROM landlord 
-        WHERE land_name LIKE %s OR land_phone LIKE %s
+        WHERE land_name LIKE %s OR land_phone LIKE %s OR land_idcard LIKE %s
         """
         # 处理搜索关键词
         like_keyword = f"%{keyword}%"
-        params = (like_keyword, like_keyword)
+        params = (like_keyword, like_keyword, like_keyword)
         
         # 分页查询
         page_sql = build_page_sql(base_sql, offset, size)

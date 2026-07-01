@@ -84,3 +84,10 @@ class UserModel:
         """根据账号查询员工（登录用）"""
         sql = "SELECT * FROM sys_user WHERE username = %s"
         return MySQLConnection.execute_sql(sql, (username,), fetch_type="one")
+    
+    @staticmethod
+    def get_user_by_phone(phone):
+        """根据手机号查询用户"""
+        sql = "SELECT * FROM sys_user WHERE phone = %s"
+        return MySQLConnection.execute_sql(sql, (phone,), fetch_type="one")
+    

@@ -78,6 +78,10 @@ function deleteType(id) {
 let housePage = getPageParams();
 let houseKeyword = "";
 let houseStatus = -1;
+let selectTypeId = -1;
+let selectProvince = "";
+let selectCity = "";
+let selectCounty = "";
 
 function loadHouseList(page = 1) {
     housePage.page = page;
@@ -85,7 +89,11 @@ function loadHouseList(page = 1) {
         page: housePage.page,
         size: housePage.size,
         keyword: houseKeyword,
-        status: houseStatus
+        status: houseStatus,
+        type_id: selectTypeId,
+        province: selectProvince,
+        city: selectCity,
+        county: selectCounty
     };
 
     http.get("/house/list", { params }).then(res => {
@@ -115,9 +123,48 @@ function loadHouseList(page = 1) {
     });
 }
 
+// 自动搜索函数（联动清空下级下拉）
 function searchHouse() {
+    const provVal = document.getElementById("provinceSelect").value;
+    const cityVal = document.getElementById("citySelect").value;
+
+    // 省份切换，重置城市、区县
+    if (provVal !== selectProvince) {
+        document.getElementById("citySelect").value = "";
+        document.getElementById("countySelect").value = "";
+        loadCitySelect(provVal);
+    }
+    // 城市切换，重置区县
+    if (cityVal !== selectCity) {
+        document.getElementById("countySelect").value = "";
+        loadCountySelect(provVal, cityVal);
+    }
+
+    selectProvince = document.getElementById("provinceSelect").value.trim();
+    selectCity = document.getElementById("citySelect").value.trim();
+    selectCounty = document.getElementById("countySelect").value.trim();
     houseKeyword = document.getElementById("houseKeyword").value.trim();
     houseStatus = document.getElementById("houseStatus").value;
+    selectTypeId = parseInt(document.getElementById("typeSelect").value);
+    loadHouseList(1);
+}
+
+function resetSearch() {
+    document.getElementById("provinceSelect").value = "";
+    document.getElementById("citySelect").value = "";
+    document.getElementById("countySelect").value = "";
+    document.getElementById("typeSelect").value = "-1";
+    document.getElementById("houseKeyword").value = "";
+    document.getElementById("houseStatus").value = "-1";
+    selectProvince = "";
+    selectCity = "";
+    selectCounty = "";
+    houseKeyword = "";
+    houseStatus = -1;
+    selectTypeId = -1;
+    loadProvinceSelect();
+    loadCitySelect();
+    loadCountySelect();
     loadHouseList(1);
 }
 
@@ -186,6 +233,9 @@ function saveHouse() {
     api.then(() => {
         alert("保存成功");
         bootstrap.Modal.getInstance(document.getElementById("houseModal")).hide();
+        loadProvinceSelect();
+        loadCitySelect();
+        loadCountySelect();
         loadHouseList();
     }).catch(() => {});
 }
@@ -194,6 +244,9 @@ function deleteHouse(id) {
     if (!confirm("确定删除该房源吗？")) return;
     http.delete("/house/delete/" + id).then(() => {
         alert("删除成功");
+        loadProvinceSelect();
+        loadCitySelect();
+        loadCountySelect();
         loadHouseList();
     }).catch(() => {});
 }
@@ -217,5 +270,54 @@ function loadLandlordSelect() {
             html += `<option value="${item.land_id}">${item.land_name} - ${item.land_phone}</option>`;
         });
         document.getElementById("landId").innerHTML = html;
+    });
+}
+
+// 加载户型筛选框下拉
+function loadTypeFilterSelect() {
+    http.get("/house/type/list").then(res => {
+        let html = '<option value="-1">全部户型</option>';
+        res.forEach(item => {
+            html += `<option value="${item.type_id}">${item.type_name}</option>`;
+        });
+        document.getElementById("typeSelect").innerHTML = html;
+    });
+}
+
+// 加载省份下拉
+function loadProvinceSelect() {
+    http.get("/address/province/list").then(res => {
+        let html = '<option value="">全部省份</option>';
+        res.forEach(item => {
+            html += `<option value="${item.name}">${item.name}</option>`;
+        });
+        document.getElementById("provinceSelect").innerHTML = html;
+    });
+}
+
+// 根据省份加载城市
+function loadCitySelect(province = "") {
+    let params = {};
+    if (province) params.province = province;
+    http.get("/address/city/list", { params }).then(res => {
+        let html = '<option value="">全部城市</option>';
+        res.forEach(item => {
+            html += `<option value="${item.name}">${item.name}</option>`;
+        });
+        document.getElementById("citySelect").innerHTML = html;
+    });
+}
+
+// 根据省+市加载区县
+function loadCountySelect(province = "", city = "") {
+    let params = {};
+    if (province) params.province = province;
+    if (city) params.city = city;
+    http.get("/address/county/list", { params }).then(res => {
+        let html = '<option value="">全部区县</option>';
+        res.forEach(item => {
+            html += `<option value="${item.name}">${item.name}</option>`;
+        });
+        document.getElementById("countySelect").innerHTML = html;
     });
 }
