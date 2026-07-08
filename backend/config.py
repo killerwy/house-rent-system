@@ -2,7 +2,8 @@ import os
 from dotenv import load_dotenv
 
 # 加载环境变量
-load_dotenv()
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+load_dotenv(dotenv_path=env_path)
 
 # 数据库配置
 MYSQL_CONFIG = {
@@ -16,7 +17,7 @@ MYSQL_CONFIG = {
 }
 
 # JWT配置
-JWT_SECRET_KEY = os.getenv("JWT_SECRET", "house_rent_2026_course_design_secure_123456789abc")
+JWT_SECRET_KEY = os.getenv("JWT_SECRET", "your_jwt_secret_key_of_no_less_than_32_bits")
 JWT_ACCESS_TOKEN_EXPIRES = 3600 * 8  # token有效期8小时
 
 # 备份配置
@@ -29,5 +30,5 @@ if not os.path.exists(BACKUP_PATH):
 ROLE_PERMISSIONS = {
     1: ["all"],  # 超级管理员
     2: ["house", "landlord", "customer", "rent", "charge", "stat", "view", "common"],  # 中介员工
-    3: ["view", "stat", "common"]  # 
+    3: ["view", "stat", "common"]  # 只读员工
 }
