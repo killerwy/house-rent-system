@@ -69,13 +69,13 @@ function saveCustomer() {
     }
 
     const phoneReg = /(^\d{8}$)|(^\d{11}$)/;
-    if (!phoneReg.test(data.land_phone)) {
+    if (!phoneReg.test(data.cust_phone)) {
         alert("手机号必须为8或11位数字");
         return;
     }
 
     const idCardReg = /(^\d{15}$)|(^\d{17}[\dX]$)/;
-    if (!idCardReg.test(data.land_idcard)) {
+    if (!idCardReg.test(data.cust_idcard)) {
         alert("身份证号必须为15位数字或18位数字(末位可为X)");
         return;
     }
