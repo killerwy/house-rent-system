@@ -4,16 +4,17 @@ let keyword = "";
 function loadUserList(page = 1) {
     userPage.page = page;
     http.get("/user/list", { params: { page: userPage.page, size: userPage.size, keyword } }).then(res => {
-        userPage.total = res.total;
+        userPage.total = res.data.total;
         const tbody = document.getElementById("userTableBody");
         let html = "";
-        res.list.forEach(item => {
+        res.data.list.forEach(item => {
             html += `
             <tr>
                 <td>${item.user_id}</td>
                 <td>${item.username}</td>
                 <td>${item.real_name}</td>
                 <td>${item.phone || "-"}</td>
+                <td>${item.idcard || "-"}</td>
                 <td>${item.role_name}</td>
                 <td>${formatDate(item.create_time)}</td>
                 <td>
@@ -40,6 +41,7 @@ function openAddModal() {
     document.getElementById("password").value = "";
     document.getElementById("realName").value = "";
     document.getElementById("phone").value = "";
+    document.getElementById("idCard").value = "";
     document.getElementById("roleId").value = 2;
     document.getElementById("pwdGroup").style.display = "block";
     new bootstrap.Modal(document.getElementById("userModal")).show();
@@ -48,11 +50,12 @@ function openAddModal() {
 function openEdit(id) {
     http.get("/user/" + id).then(res => {
         document.getElementById("userModalTitle").textContent = "编辑员工";
-        document.getElementById("userId").value = res.user_id;
-        document.getElementById("username").value = res.username;
-        document.getElementById("realName").value = res.real_name;
-        document.getElementById("phone").value = res.phone || "";
-        document.getElementById("roleId").value = res.role_id;
+        document.getElementById("userId").value = res.data.user_id;
+        document.getElementById("username").value = res.data.username;
+        document.getElementById("realName").value = res.data.real_name;
+        document.getElementById("phone").value = res.data.phone || "";
+        document.getElementById("idCard").value = res.data.idcard || "";
+        document.getElementById("roleId").value = res.data.role_id;
         document.getElementById("pwdGroup").style.display = "none"; // 编辑不修改密码
         new bootstrap.Modal(document.getElementById("userModal")).show();
     });
@@ -64,28 +67,20 @@ function saveUser() {
         username: document.getElementById("username").value.trim(),
         real_name: document.getElementById("realName").value.trim(),
         phone: document.getElementById("phone").value.trim(),
+        idcard: document.getElementById("idCard").value.trim(), 
         role_id: document.getElementById("roleId").value
     };
-
-    if (!data.username || !data.real_name || !data.role_id) {
-        alert("必填项不能为空");
-        return;
-    }
 
     let api;
     if (id) {
         api = http.post("/user/update", { ...data, user_id: id });
     } else {
         const pwd = document.getElementById("password").value.trim();
-        if (!pwd) {
-            alert("请设置初始密码");
-            return;
-        }
         api = http.post("/user/add", { ...data, password: pwd });
     }
 
-    api.then(() => {
-        alert("保存成功");
+    api.then(res => {
+        alert(res.msg);
         bootstrap.Modal.getInstance(document.getElementById("userModal")).hide();
         loadUserList();
     }).catch(() => {});
@@ -100,20 +95,17 @@ function openPwdModal(id) {
 function submitPwd() {
     const id = document.getElementById("pwdUserId").value;
     const newPwd = document.getElementById("newPassword").value.trim();
-    if (!newPwd) {
-        alert("请输入新密码");
-        return;
-    }
-    http.post("/user/updatePwd", { user_id: id, new_password: newPwd }).then(() => {
-        alert("密码修改成功");
+    
+    http.post("/user/updatePwd", { user_id: id, new_password: newPwd }).then(res => {
+        alert(res.msg);
         bootstrap.Modal.getInstance(document.getElementById("pwdModal")).hide();
     }).catch(() => {});
 }
 
 function deleteUser(id) {
     if (!confirm("确定删除该员工账号吗？")) return;
-    http.delete("/user/delete/" + id).then(() => {
-        alert("删除成功");
+    http.delete("/user/delete/" + id).then(res => {
+        alert(res.msg);
         loadUserList();
     }).catch(() => {});
 }

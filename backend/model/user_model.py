@@ -27,23 +27,23 @@ class UserModel:
         return total, list_data
 
     @staticmethod
-    def add_user(username, password, real_name, phone, role_id):
+    def add_user(username, password, real_name, phone, idcard, role_id):
         """新增员工（密码加密）"""
         sql = """
-        INSERT INTO sys_user(username, password, real_name, phone, role_id) 
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO sys_user(username, password, real_name, phone, idcard, role_id) 
+        VALUES (%s, %s, %s, %s, %s, %s)
         """
-        return MySQLConnection.execute_sql(sql, (username, password, real_name, phone, role_id))
+        return MySQLConnection.execute_sql(sql, (username, password, real_name, phone, idcard, role_id))
 
     @staticmethod
-    def update_user(user_id, real_name, phone, role_id):
+    def update_user(user_id, real_name, phone, idcard, role_id):
         """修改员工信息（不修改密码）"""
         sql = """
         UPDATE sys_user 
-        SET real_name=%s, phone=%s, role_id=%s 
+        SET real_name=%s, phone=%s, idcard=%s, role_id=%s 
         WHERE user_id=%s
         """
-        return MySQLConnection.execute_sql(sql, (real_name, phone, role_id, user_id))
+        return MySQLConnection.execute_sql(sql, (real_name, phone, idcard, role_id, user_id))
 
     @staticmethod
     def update_password(user_id, new_password):
@@ -60,9 +60,9 @@ class UserModel:
         if user and user["role_id"] == 1:
             return -1  # 禁止删除超级管理员
         # 检查是否有操作记录
-        check_contract = "SELECT COUNT(*) as total FROM rent_contract WHERE operator_id = %s"
-        contract_count = MySQLConnection.execute_sql(check_contract, (user_id,), fetch_type="one")
-        if contract_count["total"] > 0:
+        check_rent = "SELECT COUNT(*) as total FROM rent WHERE operator_id = %s"
+        rent_count = MySQLConnection.execute_sql(check_rent, (user_id,), fetch_type="one")
+        if rent_count["total"] > 0:
             return -2  # 有操作记录，禁止删除
         # 执行删除
         sql = "DELETE FROM sys_user WHERE user_id = %s"
@@ -91,3 +91,8 @@ class UserModel:
         sql = "SELECT * FROM sys_user WHERE phone = %s"
         return MySQLConnection.execute_sql(sql, (phone,), fetch_type="one")
     
+    @staticmethod
+    def get_user_by_idcard(idcard):
+        """根据身份证号查询用户"""
+        sql = "SELECT * FROM sys_user WHERE idcard = %s"
+        return MySQLConnection.execute_sql(sql, (idcard,), fetch_type="one")

@@ -51,7 +51,7 @@ def update_type():
     remark = data.get("remark", "")
     
     if not type_id or not type_name:
-        return fail(msg="必填参数不能为空", code=400)
+        return fail(msg="必填信息不能为空", code=400)
     
     result = HouseTypeModel.update_type(type_id, type_name, remark)
     if result > 0:
@@ -106,8 +106,13 @@ def add_house():
     # 校验参数
     required = [province, city, county, address, type_id, land_id, area, rent_price]
     if not all(required):
-        return fail(msg="必填参数不能为空", code=400)
+        return fail(msg="必填信息不能为空", code=400)
     
+    if float(area) < 0:
+        return fail(msg="建筑面积不能为负数", code=400)
+    if float(rent_price) < 0:
+        return fail(msg="月租金不能为负数", code=400)
+
     # 检查房屋地址是否重复
     if HouseModel.get_house_by_address(province, city, county, address):
         return fail(msg="房屋已存在", code=400)
@@ -138,7 +143,12 @@ def update_house():
     
     required = [house_id, province, city, county, address, type_id, land_id, area, rent_price]
     if not all(required):
-        return fail(msg="必填参数不能为空", code=400)
+        return fail(msg="必填信息不能为空", code=400)
+    
+    if float(area) < 0:
+        return fail(msg="建筑面积不能为负数", code=400)
+    if float(rent_price) < 0:
+        return fail(msg="月租金不能为负数", code=400)
     
     # 检查房屋是否重复（排除自身）
     house = HouseModel.get_house_by_address(province, city, county, address)

@@ -4,10 +4,10 @@ let keyword = "";
 function loadList(page = 1) {
     pageInfo.page = page;
     http.get("/landlord/list", { params: { page: pageInfo.page, size: pageInfo.size, keyword } }).then(res => {
-        pageInfo.total = res.total;
+        pageInfo.total = res.data.total;
         const tbody = document.getElementById("tableBody");
         let html = "";
-        res.list.forEach(item => {
+        res.data.list.forEach(item => {
             html += `
             <tr>
                 <td>${item.land_id}</td>
@@ -45,11 +45,11 @@ function openAddModal() {
 function openEdit(id) {
     http.get("/landlord/" + id).then(res => {
         document.getElementById("modalTitle").textContent = "编辑房东";
-        document.getElementById("landId").value = res.land_id;
-        document.getElementById("landName").value = res.land_name;
-        document.getElementById("landPhone").value = res.land_phone;
-        document.getElementById("landIdcard").value = res.land_idcard || "";
-        document.getElementById("landAddress").value = res.land_address || "";
+        document.getElementById("landId").value = res.data.land_id;
+        document.getElementById("landName").value = res.data.land_name;
+        document.getElementById("landPhone").value = res.data.land_phone;
+        document.getElementById("landIdcard").value = res.data.land_idcard || "";
+        document.getElementById("landAddress").value = res.data.land_address || "";
         new bootstrap.Modal(document.getElementById("landlordModal")).show();
     });
 }
@@ -63,26 +63,9 @@ function saveLandlord() {
         land_address: document.getElementById("landAddress").value.trim()
     };
 
-    if (!data.land_name || !data.land_phone) {
-        alert("姓名和手机号不能为空");
-        return;
-    }
-
-    const phoneReg = /(^\d{8}$)|(^\d{11}$)/;
-    if (!phoneReg.test(data.land_phone)) {
-        alert("手机号必须为8或11位数字");
-        return;
-    }
-
-    const idCardReg = /(^\d{15}$)|(^\d{17}[\dX]$)/;
-    if (!idCardReg.test(data.land_idcard)) {
-        alert("身份证号必须为15位数字或18位数字(末位可为X)");
-        return;
-    }
-
     const api = id ? http.post("/landlord/update", { ...data, land_id: id }) : http.post("/landlord/add", data);
-    api.then(() => {
-        alert("保存成功");
+    api.then(res => {
+        alert(res.msg);
         bootstrap.Modal.getInstance(document.getElementById("landlordModal")).hide();
         loadList();
     }).catch(() => {});
@@ -90,8 +73,8 @@ function saveLandlord() {
 
 function deleteItem(id) {
     if (!confirm("确定删除该房东吗？")) return;
-    http.delete("/landlord/delete/" + id).then(() => {
-        alert("删除成功");
+    http.delete("/landlord/delete/" + id).then(res => {
+        alert(res.msg);
         loadList();
     }).catch(() => {});
 }

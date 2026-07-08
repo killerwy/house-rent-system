@@ -52,7 +52,7 @@ class CustomerModel:
     def delete_customer(cust_id):
         """删除租客（检查关联合同）"""
         # 检查关联合同
-        check_sql = "SELECT COUNT(*) as total FROM rent_contract WHERE cust_id = %s"
+        check_sql = "SELECT COUNT(*) as total FROM rent WHERE cust_id = %s"
         check_result = MySQLConnection.execute_sql(check_sql, (cust_id,), fetch_type="one")
         if check_result["total"] > 0:
             return -1
@@ -71,3 +71,9 @@ class CustomerModel:
         """根据手机号查询租客"""
         sql = "SELECT * FROM customer WHERE cust_phone = %s"
         return MySQLConnection.execute_sql(sql, (phone,), fetch_type="one")
+    
+    @staticmethod
+    def get_customer_by_idcard(idcard):
+        """根据身份证号查询租客"""
+        sql = "SELECT * FROM customer WHERE cust_idcard = %s"
+        return MySQLConnection.execute_sql(sql, (idcard,), fetch_type="one")

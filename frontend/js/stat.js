@@ -7,7 +7,7 @@ function loadStatData() {
         const rentData = [];
         const emptyData = [];
 
-        res.forEach(item => {
+        res.data.forEach(item => {
             const rate = item.总房源数 > 0 ? ((item.已出租数量 / item.总房源数) * 100).toFixed(1) + "%" : "-";
             html += `
             <tr>

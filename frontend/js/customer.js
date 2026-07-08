@@ -4,10 +4,10 @@ let keyword = "";
 function loadList(page = 1) {
     pageInfo.page = page;
     http.get("/customer/list", { params: { page: pageInfo.page, size: pageInfo.size, keyword } }).then(res => {
-        pageInfo.total = res.total;
+        pageInfo.total = res.data.total;
         const tbody = document.getElementById("tableBody");
         let html = "";
-        res.list.forEach(item => {
+        res.data.list.forEach(item => {
             html += `
             <tr>
                 <td>${item.cust_id}</td>
@@ -45,11 +45,11 @@ function openAddModal() {
 function openEdit(id) {
     http.get("/customer/" + id).then(res => {
         document.getElementById("modalTitle").textContent = "编辑租客";
-        document.getElementById("custId").value = res.cust_id;
-        document.getElementById("custName").value = res.cust_name;
-        document.getElementById("custPhone").value = res.cust_phone;
-        document.getElementById("custIdcard").value = res.cust_idcard || "";
-        document.getElementById("workUnit").value = res.work_unit || "";
+        document.getElementById("custId").value = res.data.cust_id;
+        document.getElementById("custName").value = res.data.cust_name;
+        document.getElementById("custPhone").value = res.data.cust_phone;
+        document.getElementById("custIdcard").value = res.data.cust_idcard || "";
+        document.getElementById("workUnit").value = res.data.work_unit || "";
         new bootstrap.Modal(document.getElementById("customerModal")).show();
     });
 }
@@ -63,27 +63,9 @@ function saveCustomer() {
         work_unit: document.getElementById("workUnit").value.trim()
     };
 
-    if (!data.cust_name || !data.cust_phone) {
-        alert("姓名和手机号不能为空");
-        return;
-    }
-
-    const phoneReg = /(^\d{8}$)|(^\d{11}$)/;
-    if (!phoneReg.test(data.cust_phone)) {
-        alert("手机号必须为8或11位数字");
-        return;
-    }
-
-    const idCardReg = /(^\d{15}$)|(^\d{17}[\dX]$)/;
-    if (!idCardReg.test(data.cust_idcard)) {
-        alert("身份证号必须为15位数字或18位数字(末位可为X)");
-        return;
-    }
-
-
     const api = id ? http.post("/customer/update", { ...data, cust_id: id }) : http.post("/customer/add", data);
-    api.then(() => {
-        alert("保存成功");
+    api.then(res => {
+        alert(res.msg);
         bootstrap.Modal.getInstance(document.getElementById("customerModal")).hide();
         loadList();
     }).catch(() => {});
@@ -91,8 +73,8 @@ function saveCustomer() {
 
 function deleteItem(id) {
     if (!confirm("确定删除该租客吗？")) return;
-    http.delete("/customer/delete/" + id).then(() => {
-        alert("删除成功");
+    http.delete("/customer/delete/" + id).then(res => {
+        alert(res.msg);
         loadList();
     }).catch(() => {});
 }

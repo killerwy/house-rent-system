@@ -13,13 +13,13 @@
 
         <div class="toolbar">
             <div class="search-box">
-                <input type="text" id="contractKeyword" class="form-control form-control-sm" placeholder="搜索地址/租客" style="width:200px;">
-                <select id="contractStatus" class="form-select form-select-sm" style="width:120px;">
+                <input type="text" id="rentKeyword" class="form-control form-control-sm" placeholder="搜索地址/租客" style="width:200px;">
+                <select id="rentStatus" class="form-select form-select-sm" style="width:120px;">
                     <option value="-1">全部状态</option>
                     <option value="0">租住中</option>
                     <option value="1">已退租</option>
                 </select>
-                <button class="btn btn-sm btn-primary" onclick="searchContract()">搜索</button>
+                <button class="btn btn-sm btn-primary" onclick="searchRent()">搜索</button>
             </div>
             <div>
                 <a href="rent_add.html" class="btn btn-primary btn-sm">+ 新增出租</a>
@@ -42,10 +42,10 @@
                         <th width="180">操作</th>
                     </tr>
                 </thead>
-                <tbody id="contractTableBody"></tbody>
+                <tbody id="rentTableBody"></tbody>
             </table>
         </div>
-        <div id="contractPagination" class="pagination"></div>
+        <div id="rentPagination" class="pagination"></div>
     </div>
 
     <!-- 退租弹窗 -->
@@ -57,7 +57,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body modal-form">
-                    <input type="hidden" id="returnContractId">
+                    <input type="hidden" id="returnRentId">
                     <div class="form-group">
                         <label>归还日期 <span style="color:red">*</span></label>
                         <input type="date" id="returnDate">
@@ -77,7 +77,7 @@
     <script src="../js/rent.js"></script>
     <script>
         window.onload = function() {
-            loadContractList();
+            loadRentList();
         };
     </script>
 </body>

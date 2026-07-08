@@ -24,7 +24,7 @@ def do_backup():
         return success(data={
             "file_name": result["file_name"],
             "file_path": result["file_path"]
-        }, msg="数据库备份成功")
+        }, msg=f"数据库备份成功！文件：{result['file_name']}")
     else:
         return fail(msg=f"备份失败：{result.get('error', '未知错误')}")
 

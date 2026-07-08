@@ -71,3 +71,9 @@ class LandlordModel:
         """根据手机号查询房东"""
         sql = "SELECT * FROM landlord WHERE land_phone = %s"
         return MySQLConnection.execute_sql(sql, (phone,), fetch_type="one")
+    
+    @staticmethod
+    def get_landlord_by_idcard(idcard):
+        """根据身份证号查询房东"""
+        sql = "SELECT * FROM landlord WHERE land_idcard = %s"
+        return MySQLConnection.execute_sql(sql, (idcard,), fetch_type="one")

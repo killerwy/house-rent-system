@@ -48,8 +48,8 @@
             try {
                 const res = await login(username, password);
                 // 保存token和用户信息
-                localStorage.setItem("access_token", res.token);
-                localStorage.setItem("user_info", JSON.stringify(res.user_info));
+                localStorage.setItem("access_token", res.data.token);
+                localStorage.setItem("user_info", JSON.stringify(res.data.user_info));
                 alert("登录成功");
                 window.location.href = "main.html";
             } catch (err) {

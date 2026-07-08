@@ -8,7 +8,7 @@ function loadTypeList() {
     http.get("/house/type/list").then(res => {
         const tbody = document.getElementById("tableBody");
         let html = "";
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `
             <tr>
                 <td>${item.type_id}</td>
@@ -37,9 +37,9 @@ function openAddModal() {
 function openEditModal(id) {
     http.get("/house/type/" + id).then(res => {
         document.getElementById("modalTitle").textContent = "编辑户型";
-        document.getElementById("typeId").value = res.type_id;
-        document.getElementById("typeName").value = res.type_name;
-        document.getElementById("remark").value = res.remark || "";
+        document.getElementById("typeId").value = res.data.type_id;
+        document.getElementById("typeName").value = res.data.type_name;
+        document.getElementById("remark").value = res.data.remark || "";
         typeModal.show();
     });
 }
@@ -52,14 +52,9 @@ function saveType() {
         remark: document.getElementById("remark").value.trim()
     };
 
-    if (!data.type_name) {
-        alert("户型名称不能为空");
-        return;
-    }
-
     const api = id ? http.post("/house/type/update", { ...data, type_id: id }) : http.post("/house/type/add", data);
-    api.then(() => {
-        alert("保存成功");
+    api.then(res => {
+        alert(res.msg);
         typeModal.hide();
         loadTypeList();
     }).catch(() => {});
@@ -68,8 +63,8 @@ function saveType() {
 // 删除户型
 function deleteType(id) {
     if (!confirm("确定要删除该户型吗？")) return;
-    http.delete("/house/type/delete/" + id).then(() => {
-        alert("删除成功");
+    http.delete("/house/type/delete/" + id).then(res => {
+        alert(res.msg);
         loadTypeList();
     }).catch(() => {});
 }
@@ -97,10 +92,10 @@ function loadHouseList(page = 1) {
     };
 
     http.get("/house/list", { params }).then(res => {
-        housePage.total = res.total;
+        housePage.total = res.data.total;
         const tbody = document.getElementById("houseTableBody");
         let html = "";
-        res.list.forEach(item => {
+        res.data.list.forEach(item => {
             const statusText = ["空置可租","已出租","维修中","已下架"][item.house_status];
             const statusClass = ["status-success","status-warning","status-info","status-danger"][item.house_status];
             html += `
@@ -183,17 +178,17 @@ function openHouseEdit(id) {
     loadLandlordSelect();
     http.get("/house/" + id).then(res => {
         document.getElementById("houseModalTitle").textContent = "编辑房源";
-        document.getElementById("houseId").value = res.house_id;
-        document.getElementById("province").value = res.province;
-        document.getElementById("city").value = res.city;
-        document.getElementById("county").value = res.county;        
-        document.getElementById("address").value = res.address;
-        document.getElementById("typeId").value = res.type_id;
-        document.getElementById("landId").value = res.land_id;
-        document.getElementById("area").value = res.area;
-        document.getElementById("rentPrice").value = res.rent_price;
-        document.getElementById("facilities").value = res.facilities || "";
-        document.getElementById("houseStatusSelect").value = res.house_status;
+        document.getElementById("houseId").value = res.data.house_id;
+        document.getElementById("province").value = res.data.province;
+        document.getElementById("city").value = res.data.city;
+        document.getElementById("county").value = res.data.county;        
+        document.getElementById("address").value = res.data.address;
+        document.getElementById("typeId").value = res.data.type_id;
+        document.getElementById("landId").value = res.data.land_id;
+        document.getElementById("area").value = res.data.area;
+        document.getElementById("rentPrice").value = res.data.rent_price;
+        document.getElementById("facilities").value = res.data.facilities || "";
+        document.getElementById("houseStatusSelect").value = res.data.house_status;
         new bootstrap.Modal(document.getElementById("houseModal")).show();
     });
 }
@@ -213,25 +208,9 @@ function saveHouse() {
         status: document.getElementById("houseStatusSelect").value
     };
 
-    if (!data.type_id || !data.land_id || !data.province || !data.city || !data.county || !data.address) {
-        alert("必填项不能为空");
-        return;
-    }
-
-    const area = Number(document.getElementById("area").value);
-    const rent = Number(document.getElementById("rentPrice").value);
-    if (isNaN(area) || area < 0) {
-        alert("建筑面积不能为负数");
-        return;
-    }
-    if (isNaN(rent) || rent < 0) {
-        alert("月租金不能为负数");
-        return;
-    }
-
     const api = id ? http.post("/house/update", { ...data, house_id: id }) : http.post("/house/add", data);
-    api.then(() => {
-        alert("保存成功");
+    api.then(res => {
+        alert(res.msg);
         bootstrap.Modal.getInstance(document.getElementById("houseModal")).hide();
         loadProvinceSelect();
         loadCitySelect();
@@ -242,8 +221,8 @@ function saveHouse() {
 
 function deleteHouse(id) {
     if (!confirm("确定删除该房源吗？")) return;
-    http.delete("/house/delete/" + id).then(() => {
-        alert("删除成功");
+    http.delete("/house/delete/" + id).then(res => {
+        alert(res.msg);
         loadProvinceSelect();
         loadCitySelect();
         loadCountySelect();
@@ -255,7 +234,7 @@ function deleteHouse(id) {
 function loadTypeSelect() {
     http.get("/house/type/list").then(res => {
         let html = '<option value="">请选择户型</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.type_id}">${item.type_name}</option>`;
         });
         document.getElementById("typeId").innerHTML = html;
@@ -266,7 +245,7 @@ function loadTypeSelect() {
 function loadLandlordSelect() {
     http.get("/landlord/list", { params: { page: 1, size: 1000 } }).then(res => {
         let html = '<option value="">请选择房东</option>';
-        res.list.forEach(item => {
+        res.data.list.forEach(item => {
             html += `<option value="${item.land_id}">${item.land_name} - ${item.land_phone}</option>`;
         });
         document.getElementById("landId").innerHTML = html;
@@ -277,7 +256,7 @@ function loadLandlordSelect() {
 function loadTypeFilterSelect() {
     http.get("/house/type/list").then(res => {
         let html = '<option value="-1">全部户型</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.type_id}">${item.type_name}</option>`;
         });
         document.getElementById("typeSelect").innerHTML = html;
@@ -286,9 +265,9 @@ function loadTypeFilterSelect() {
 
 // 加载省份下拉
 function loadProvinceSelect() {
-    http.get("/address/province/list").then(res => {
+    http.get("/location/province/list").then(res => {
         let html = '<option value="">全部省份</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.name}">${item.name}</option>`;
         });
         document.getElementById("provinceSelect").innerHTML = html;
@@ -299,9 +278,9 @@ function loadProvinceSelect() {
 function loadCitySelect(province = "") {
     let params = {};
     if (province) params.province = province;
-    http.get("/address/city/list", { params }).then(res => {
+    http.get("/location/city/list", { params }).then(res => {
         let html = '<option value="">全部城市</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.name}">${item.name}</option>`;
         });
         document.getElementById("citySelect").innerHTML = html;
@@ -313,9 +292,9 @@ function loadCountySelect(province = "", city = "") {
     let params = {};
     if (province) params.province = province;
     if (city) params.city = city;
-    http.get("/address/county/list", { params }).then(res => {
+    http.get("/location/county/list", { params }).then(res => {
         let html = '<option value="">全部区县</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.name}">${item.name}</option>`;
         });
         document.getElementById("countySelect").innerHTML = html;

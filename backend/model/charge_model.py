@@ -10,7 +10,7 @@ class ChargeModel:
         where_conditions = []
         params = []
         if keyword:
-            where_conditions.append("(cr.contract_id LIKE %s OR c.cust_name LIKE %s)")
+            where_conditions.append("(cr.rent_id LIKE %s OR c.cust_name LIKE %s)")
             like_keyword = f"%{keyword}%"
             params.extend([like_keyword, like_keyword])
         if charge_type != -1:
@@ -20,19 +20,20 @@ class ChargeModel:
         
         # 基础SQL
         base_sql = f"""
-        SELECT cr.*, rc.contract_id, h.province, h.city, h.county, h.address, c.cust_name 
+        SELECT cr.*, r.rent_id, loc.province, loc.city, loc.county, h.address, c.cust_name 
         FROM charge_record cr
-        LEFT JOIN rent_contract rc ON cr.contract_id = rc.contract_id
-        LEFT JOIN house h ON rc.house_id = h.house_id
-        LEFT JOIN customer c ON rc.cust_id = c.cust_id
+        LEFT JOIN rent r ON cr.rent_id = r.rent_id
+        LEFT JOIN house h ON r.house_id = h.house_id
+        LEFT JOIN location loc ON h.loc_id = loc.loc_id
+        LEFT JOIN customer c ON r.cust_id = c.cust_id
         {where_sql}
         ORDER BY cr.charge_id DESC
         """
         # 计数SQL
         count_sql = f"""
         SELECT COUNT(*) as total FROM charge_record cr
-        LEFT JOIN rent_contract rc ON cr.contract_id = rc.contract_id
-        LEFT JOIN customer c ON rc.cust_id = c.cust_id
+        LEFT JOIN rent r ON cr.rent_id = r.rent_id
+        LEFT JOIN customer c ON r.cust_id = c.cust_id
         {where_sql}
         """
         
@@ -44,13 +45,13 @@ class ChargeModel:
         return total, list_data
 
     @staticmethod
-    def add_charge(contract_id, charge_type, charge_money, remark=""):
+    def add_charge(rent_id, charge_type, charge_money, remark=""):
         """新增收费记录"""
         sql = """
-        INSERT INTO charge_record(contract_id, charge_type, charge_money, remark) 
+        INSERT INTO charge_record(rent_id, charge_type, charge_money, remark) 
         VALUES (%s, %s, %s, %s)
         """
-        return MySQLConnection.execute_sql(sql, (contract_id, charge_type, charge_money, remark))
+        return MySQLConnection.execute_sql(sql, (rent_id, charge_type, charge_money, remark))
 
     @staticmethod
     def get_charge_by_id(charge_id):
@@ -59,7 +60,7 @@ class ChargeModel:
         return MySQLConnection.execute_sql(sql, (charge_id,), fetch_type="one")
     
     @staticmethod
-    def get_charge_by_contract(contract_id):
+    def get_charge_by_rent(rent_id):
         """查询合同所有收费记录"""
-        sql = "SELECT * FROM charge_record WHERE contract_id = %s ORDER BY charge_time DESC"
-        return MySQLConnection.execute_sql(sql, (contract_id,), fetch_type="all")
+        sql = "SELECT * FROM charge_record WHERE rent_id = %s ORDER BY charge_time DESC"
+        return MySQLConnection.execute_sql(sql, (rent_id,), fetch_type="all")

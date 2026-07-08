@@ -31,7 +31,7 @@ http.interceptors.response.use(
             }
             return Promise.reject(res);
         }
-        return res.data;
+        return res;
     },
     error => {
         if (error.response && error.response.status === 401) {

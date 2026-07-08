@@ -19,10 +19,10 @@ function loadViewList(page = 1) {
         county: viewCounty
     };
     http.get("/view/houseAll", { params }).then(res => {
-        viewPage.total = res.total;
+        viewPage.total = res.data.total;
         const tbody = document.getElementById("viewTableBody");
         let html = "";
-        res.list.forEach(item => {
+        res.data.list.forEach(item => {
             const statusClass = item.房屋状态 === "空置可租" ? "status-success" : 
                                item.房屋状态 === "已出租" ? "status-warning" : "status-info";
             html += `
@@ -91,9 +91,9 @@ function resetViewSearch() {
 
 // 加载省份下拉
 function loadProvinceSelectView() {
-    http.get("/address/province/list").then(res => {
+    http.get("/location/province/list").then(res => {
         let html = '<option value="">全部省份</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.name}">${item.name}</option>`;
         });
         document.getElementById("provinceSelectView").innerHTML = html;
@@ -104,9 +104,9 @@ function loadProvinceSelectView() {
 function loadCitySelectView(province = "") {
     let params = {};
     if (province) params.province = province;
-    http.get("/address/city/list", { params }).then(res => {
+    http.get("/location/city/list", { params }).then(res => {
         let html = '<option value="">全部城市</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.name}">${item.name}</option>`;
         });
         document.getElementById("citySelectView").innerHTML = html;
@@ -118,9 +118,9 @@ function loadCountySelectView(province = "", city = "") {
     let params = {};
     if (province) params.province = province;
     if (city) params.city = city;
-    http.get("/address/county/list", { params }).then(res => {
+    http.get("/location/county/list", { params }).then(res => {
         let html = '<option value="">全部区县</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.name}">${item.name}</option>`;
         });
         document.getElementById("countySelectView").innerHTML = html;
@@ -131,7 +131,7 @@ function loadCountySelectView(province = "", city = "") {
 function loadTypeSelectView() {
     http.get("/house/type/list").then(res => {
         let html = '<option value="">全部户型</option>';
-        res.forEach(item => {
+        res.data.forEach(item => {
             html += `<option value="${item.type_name}">${item.type_name}</option>`;
         });
         document.getElementById("typeSelectView").innerHTML = html;
